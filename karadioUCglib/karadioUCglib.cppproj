@@ -1,0 +1,777 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>7.0</ProjectVersion>
+    <ToolchainName>com.Atmel.AVRGCC8.CPP</ToolchainName>
+    <ProjectGuid>{59cf16fb-9f67-4735-b9e6-7a77c44191dc}</ProjectGuid>
+    <avrdevice>ATmega2560</avrdevice>
+    <avrdeviceseries>none</avrdeviceseries>
+    <OutputType>Executable</OutputType>
+    <Language>CPP</Language>
+    <OutputFileName>$(MSBuildProjectName)</OutputFileName>
+    <OutputFileExtension>.elf</OutputFileExtension>
+    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <AssemblyName>karadioUCglib</AssemblyName>
+    <Name>karadioUCglib</Name>
+    <RootNamespace>karadioUCglib</RootNamespace>
+    <ToolchainFlavour>Native</ToolchainFlavour>
+    <KeepTimersRunning>true</KeepTimersRunning>
+    <OverrideVtor>false</OverrideVtor>
+    <OverrideVtorValue>exception_table</OverrideVtorValue>
+    <eraseonlaunchrule>0</eraseonlaunchrule>
+    <ProgFlashFromRam>true</ProgFlashFromRam>
+    <RamSnippetAddress>0x20000000</RamSnippetAddress>
+    <CacheFlash>true</CacheFlash>
+    <UncachedRange />
+    <BootSegment>0</BootSegment>
+    <AsfFrameworkConfig>
+      <framework-data>
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.28.1" />
+        </dependencies>
+      </framework-data>
+    </AsfFrameworkConfig>
+    <preserveEEPROM>true</preserveEEPROM>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <ToolchainSettings>
+      <AvrGccCpp>
+  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>ARDUINO=106013</Value>
+      <Value>ARDUINO_MAIN</Value>
+      <Value>F_CPU=72000000L</Value>
+      <Value>printf=iprintf</Value>
+      <Value>__STM32F1__</Value>
+      <Value>DEBUG_LEVEL=DEBUG_NONE</Value>
+      <Value>BOARD_generic_stm32f103c</Value>
+      <Value>VECT_TAB_ADDR=0x8000000</Value>
+      <Value>ERROR_LED_PORT=GPIOB</Value>
+      <Value>ERROR_LED_PIN=1</Value>
+      <Value>ARDUINO_GENERIC_STM32F103C</Value>
+      <Value>ARDUINO_ARCH_STM32F1</Value>
+    </ListValues>
+  </avrgcc.compiler.symbols.DefSymbols>
+  <avrgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/Arduino-IRremote-master</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/libraries/EEPROM</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/IRLib2</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/IRLibProtocols</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/IRLibRecvPCI</Value>
+      <Value>C:/Program Files (x86)/Arduino/libraries</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/libraries</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/avr</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/libmaple</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/stm32f1</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/variants/generic_stm32f103c</Value>
+      <Value>../../../karadioUCglib</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/include</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/stm32f1/include</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/usb/stm32f1</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/usb/usb_lib</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/4.8.3-2014q1/include</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/arm-none-eabi/include</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/lib/gcc/arm-none-eabi/4.8.3/include</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/lib/gcc/arm-none-eabi/4.8.3/include/</Value>
+    </ListValues>
+  </avrgcc.compiler.directories.IncludePaths>
+  <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
+  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+  <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcccpp.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>ARDUINO=106013</Value>
+      <Value>ARDUINO_MAIN</Value>
+      <Value>F_CPU=72000000L</Value>
+      <Value>printf=iprintf</Value>
+      <Value>__STM32F1__</Value>
+      <Value>DEBUG_LEVEL=DEBUG_NONE</Value>
+      <Value>BOARD_generic_stm32f103c</Value>
+      <Value>VECT_TAB_ADDR=0x8000000</Value>
+      <Value>ERROR_LED_PORT=GPIOB</Value>
+      <Value>ERROR_LED_PIN=1</Value>
+      <Value>ARDUINO_GENERIC_STM32F103C</Value>
+      <Value>ARDUINO_ARCH_STM32F1</Value>
+    </ListValues>
+  </avrgcccpp.compiler.symbols.DefSymbols>
+  <avrgcccpp.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/Arduino-IRremote-master</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/libraries/EEPROM</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/IRLib2</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/IRLibProtocols</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/IRLibRecvPCI</Value>
+      <Value>C:/Program Files (x86)/Arduino/libraries</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/libraries</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/avr</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/libmaple</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/stm32f1</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/variants/generic_stm32f103c</Value>
+      <Value>../../../karadioUCglib</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/include</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/stm32f1/include</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/usb/stm32f1</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/usb/usb_lib</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/4.8.3-2014q1/include</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/arm-none-eabi/include</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/lib/gcc/arm-none-eabi/4.8.3/include</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/lib/gcc/arm-none-eabi/4.8.3/include/</Value>
+    </ListValues>
+  </avrgcccpp.compiler.directories.IncludePaths>
+  <avrgcccpp.compiler.optimization.level>Optimize (-O1)</avrgcccpp.compiler.optimization.level>
+  <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
+  <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcccpp.compiler.optimization.DebugLevel>Default (-g2)</avrgcccpp.compiler.optimization.DebugLevel>
+  <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
+  <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
+</AvrGccCpp>
+    </ToolchainSettings>
+    <VMSETTING_IncludePaths>C:/Users/jp/Documents/Arduino/libraries/Arduino-IRremote-master;C:/Users/jp/Documents/Arduino/libraries/Arduino-IRremote-master/utility;C:/Users/jp/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/EEPROM/src;C:/Users/jp/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/EEPROM/src/utility;C:/Users/jp/Documents/Arduino/libraries/IRLib2;C:/Users/jp/Documents/Arduino/libraries/IRLib2/utility;C:/Users/jp/Documents/Arduino/libraries/IRLibProtocols;C:/Users/jp/Documents/Arduino/libraries/IRLibProtocols/utility;C:/Users/jp/Documents/Arduino/libraries/IRLibRecvPCI;C:/Users/jp/Documents/Arduino/libraries/IRLibRecvPCI/utility;C:/Program Files (x86)/Arduino/libraries;C:/Users/jp/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries;C:/Users/jp/Documents/Arduino/libraries;C:/Users/jp/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino;C:/Users/jp/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/variants/micro;../../../karadioUCglib;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2//avr/include/avr/;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/jp/Documents/Arduino/libraries/U8glib;C:/Users/jp/Documents/Arduino/libraries/U8glib/utility;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/avr/;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/lib/gcc/avr/4.9.2/include;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/libraries/EEPROM;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/libraries;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/avr;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/libmaple;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/stm32f1;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/variants/generic_stm32f103c;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/include;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/stm32f1/include;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/usb/stm32f1;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/usb/usb_lib;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/4.8.3-2014q1/include;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/arm-none-eabi/include;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/lib/gcc/arm-none-eabi/4.8.3/include;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/lib/gcc/arm-none-eabi/4.8.3/include/;</VMSETTING_IncludePaths>
+    <VisualMicroSettings>
+      <VisualMicroSettings>
+        <arduino.board.name>Arduino_STM32_genericSTM32F103C</arduino.board.name>
+        <arduino.board.desc>Generic STM32F103C series</arduino.board.desc>
+        <arduino.board.property_bag>name=Generic STM32F103C series
+vid.0=0x1EAF
+pid.0=0x0004
+build.variant=generic_stm32f103c
+build.vect=VECT_TAB_ADDR=0x8000000
+build.core=maple
+build.board=GENERIC_STM32F103C
+upload.use_1200bps_touch=false
+upload.file_type=bin
+upload.auto_reset=true
+menu.device_variant.STM32F103C8=STM32F103C8 (20k RAM. 64k Flash)
+menu.device_variant.STM32F103C8.build.cpu_flags=-DMCU_STM32F103C8
+menu.device_variant.STM32F103C8.build.ldscript=ld/jtag_c8.ld
+menu.device_variant.STM32F103C8.upload.maximum_size=65536
+menu.device_variant.STM32F103C8.upload.ram.maximum_size=20480
+menu.device_variant.STM32F103C8.upload.flash.maximum_size=65536
+menu.device_variant.STM32F103CB=STM32F103CB (20k RAM. 128k Flash)
+menu.device_variant.STM32F103CB.build.cpu_flags=-DMCU_STM32F103CB
+menu.device_variant.STM32F103CB.build.ldscript=ld/jtag.ld
+menu.device_variant.STM32F103CB.upload.maximum_size=131072
+menu.device_variant.STM32F103CB.upload.ram.maximum_size=20480
+menu.device_variant.STM32F103CB.upload.flash.maximum_size=131072
+menu.upload_method.DFUUploadMethod=STM32duino bootloader
+menu.upload_method.DFUUploadMethod.upload.protocol=maple_dfu
+menu.upload_method.DFUUploadMethod.upload.tool=maple_upload
+menu.upload_method.DFUUploadMethod.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER -DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG=1
+menu.upload_method.DFUUploadMethod.build.vect=VECT_TAB_ADDR=0x8002000
+menu.upload_method.DFUUploadMethod.build.ldscript=ld/bootloader_20.ld
+menu.upload_method.DFUUploadMethod.upload.usbID=1EAF:0003
+menu.upload_method.DFUUploadMethod.upload.altID=2
+menu.upload_method.serialMethod=Serial
+menu.upload_method.serialMethod.upload.protocol=maple_serial
+menu.upload_method.serialMethod.upload.tool=serial_upload
+menu.upload_method.serialMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG
+menu.upload_method.STLinkMethod=STLink
+menu.upload_method.STLinkMethod.upload.protocol=STLink
+menu.upload_method.STLinkMethod.upload.tool=stlink_upload
+menu.upload_method.STLinkMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG=1 -DSERIAL_USB -DGENERIC_BOOTLOADER
+menu.upload_method.BMPMethod=BMP (Black Magic Probe)
+menu.upload_method.BMPMethod.upload.protocol=gdb_bmp
+menu.upload_method.BMPMethod.upload.tool=bmp_upload
+menu.upload_method.BMPMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG
+menu.upload_method.jlinkMethod=JLink
+menu.upload_method.jlinkMethod.upload.protocol=jlink
+menu.upload_method.jlinkMethod.upload.tool=jlink_upload
+menu.upload_method.jlinkMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG=1 -DSERIAL_USB -DGENERIC_BOOTLOADER
+menu.cpu_speed.speed_72mhz=72Mhz (Normal)
+menu.cpu_speed.speed_72mhz.build.f_cpu=72000000L
+menu.cpu_speed.speed_48mhz=48Mhz (Slow - with USB)
+menu.cpu_speed.speed_48mhz.build.f_cpu=48000000L
+runtime.ide.path=C:\Program Files (x86)\Arduino
+runtime.os=windows
+build.system.path=C:\Users\jp\Documents\Arduino\hardware\Arduino_STM32\STM32F1\system
+runtime.ide.version=106013
+target_package=Arduino_STM32
+target_platform=STM32F1
+runtime.hardware.path=C:\Users\jp\Documents\Arduino\hardware\Arduino_STM32
+originalid=genericSTM32F103C
+version=0.1.2
+compiler.warning_flags=-w -DDEBUG_LEVEL=DEBUG_NONE
+compiler.warning_flags.none=-w -DDEBUG_LEVEL=DEBUG_NONE
+compiler.warning_flags.default=-DDEBUG_LEVEL=DEBUG_NONE
+compiler.warning_flags.more=-Wall -DDEBUG_LEVEL=DEBUG_FAULT
+compiler.warning_flags.all=-Wall -Wextra -DDEBUG_LEVEL=DEBUG_ALL
+compiler.path={runtime.tools.arm-none-eabi-gcc.path}/bin/
+compiler.c.cmd=arm-none-eabi-gcc
+compiler.c.flags=-c -g -Os {compiler.warning_flags} -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin}
+compiler.c.elf.cmd=arm-none-eabi-g++
+compiler.c.elf.flags=-Os -Wl,--gc-sections
+compiler.S.cmd=arm-none-eabi-gcc
+compiler.S.flags=-c -g -x assembler-with-cpp -MMD
+compiler.cpp.cmd=arm-none-eabi-g++
+compiler.cpp.flags=-c -g -Os {compiler.warning_flags} -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin}
+compiler.ar.cmd=arm-none-eabi-ar
+compiler.ar.flags=rcs
+compiler.objcopy.cmd=arm-none-eabi-objcopy
+compiler.objcopy.eep.flags=-O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0
+compiler.elf2hex.flags=-O binary
+compiler.elf2hex.cmd=arm-none-eabi-objcopy
+compiler.ldflags=
+compiler.size.cmd=arm-none-eabi-size
+compiler.define=-DARDUINO=
+build.f_cpu=72000000L
+build.mcu=cortex-m3
+build.common_flags=-mthumb  -march=armv7-m -D__STM32F1__
+build.variant_system_lib=libmaple.a
+build.error_led_port=GPIOB
+build.error_led_pin=1
+build.cpu_flags=
+build.hs_flag=
+build.upload_flags=
+build.extra_flags={build.upload_flags} {build.cpu_flags} {build.hs_flag} {build.common_flags}
+compiler.c.extra_flags=
+compiler.c.elf.extra_flags="-L{build.variant.path}/ld"
+compiler.cpp.extra_flags=
+compiler.S.extra_flags=
+compiler.ar.extra_flags=
+compiler.elf2hex.extra_flags=
+compiler.libs.c.flags="-I{build.system.path}/libmaple" "-I{build.system.path}/libmaple/include" "-I{build.system.path}/libmaple/stm32f1/include"                                                           "-I{build.system.path}/libmaple/usb/stm32f1" "-I{build.system.path}/libmaple/usb/usb_lib"
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.c.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.c.extra_flags} {build.extra_flags} {compiler.libs.c.flags} {includes} "{source_file}" -o "{object_file}"
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.cpp.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.cpp.extra_flags} {build.extra_flags} {build.cpu_flags} {build.hs_flag} {build.common_flags} {compiler.libs.c.flags} {includes} "{source_file}" -o "{object_file}"
+recipe.S.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.S.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.S.extra_flags} {build.extra_flags} {build.cpu_flags} {build.hs_flag} {build.common_flags} {compiler.libs.c.flags} {includes} "{source_file}" -o "{object_file}"
+recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compiler.ar.extra_flags} "{archive_file_path}" "{object_file}"
+recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.flags} -mcpu={build.mcu} "-T{build.variant.path}/{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" {compiler.c.elf.extra_flags} -o "{build.path}/{build.project_name}.elf" "-L{build.path}" -lm -lgcc -mthumb -Wl,--cref -Wl,--check-sections -Wl,--gc-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align -Wl,--warn-unresolved-symbols -Wl,--start-group {object_files} "{build.path}/{archive_file}" -Wl,--end-group
+recipe.objcopy.eep.pattern=
+recipe.objcopy.hex.pattern="{compiler.path}{compiler.elf2hex.cmd}" {compiler.elf2hex.flags} {compiler.elf2hex.extra_flags} "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.bin"
+recipe.size.pattern="{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.elf"
+recipe.size.regex=^(?:\.text|\.data|\.rodata|\.text.align|\.ARM.exidx)\s+([0-9]+).*
+recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
+recipe.output.tmp_file={build.project_name}.bin
+recipe.output.save_file={build.project_name}.{build.variant}.bin
+tools.maple_upload.cmd=maple_upload.bat
+tools.maple_upload.cmd.windows=maple_upload.bat
+tools.maple_upload.path={runtime.hardware.path}/tools/win
+tools.maple_upload.path.macosx={runtime.hardware.path}/tools/macosx
+tools.maple_upload.path.linux={runtime.hardware.path}/tools/linux
+tools.maple_upload.path.linux64={runtime.hardware.path}/tools/linux64
+tools.maple_upload.upload.params.verbose=-d
+tools.maple_upload.upload.params.quiet=
+tools.maple_upload.upload.pattern="{path}/{cmd}" {serial.port.file} {upload.altID} {upload.usbID} "{build.path}/{build.project_name}.bin"
+tools.serial_upload.cmd=serial_upload.bat
+tools.serial_upload.cmd.windows=serial_upload.bat
+tools.serial_upload.cmd.macosx=serial_upload
+tools.serial_upload.path={runtime.hardware.path}/tools/win
+tools.serial_upload.path.macosx={runtime.hardware.path}/tools/macosx
+tools.serial_upload.path.linux={runtime.hardware.path}/tools/linux
+tools.serial_upload.path.linux64={runtime.hardware.path}/tools/linux64
+tools.serial_upload.upload.params.verbose=-d
+tools.serial_upload.upload.params.quiet=n
+tools.serial_upload.upload.pattern="{path}/{cmd}" {serial.port.file} {upload.altID} {upload.usbID} "{build.path}/{build.project_name}.bin"
+tools.stlink_upload.cmd=stlink_upload.bat
+tools.stlink_upload.cmd.windows=stlink_upload.bat
+tools.stlink_upload.path.windows={runtime.hardware.path}/tools/win
+tools.stlink_upload.path.macosx={runtime.hardware.path}/tools/macosx
+tools.stlink_upload.path.linux={runtime.hardware.path}/tools/linux
+tools.stlink_upload.path.linux64={runtime.hardware.path}/tools/linux64
+tools.stlink_upload.upload.params.verbose=-d
+tools.stlink_upload.upload.params.quiet=
+tools.stlink_upload.upload.pattern="{path}/{cmd}" {serial.port.file} {upload.altID} {upload.usbID} "{build.path}/{build.project_name}.bin"
+tools.bmp_upload.cmd=arm-none-eabi-gdb
+tools.bmp_upload.path={runtime.tools.arm-none-eabi-gcc.path}/bin/
+tools.bmp_upload.upload.speed=230400
+tools.bmp_upload.upload.params.verbose=
+tools.bmp_upload.upload.params.quiet=-q --batch-silent
+tools.bmp_upload.upload.pattern="{path}{cmd}" -cd "{build.path}" -b {upload.speed} {upload.verbose} -ex "set debug remote 0" -ex "set target-async off" -ex "set remotetimeout 60" -ex "set mem inaccessible-by-default off" -ex "set confirm off" -ex "set height 0" -ex "target extended-remote {serial.port}" -ex "monitor swdp_scan" -ex "attach 1" -ex "x/wx 0x8000004" -ex "monitor erase_mass" -ex "echo 0x8000004 expect 0xffffffff after erase\n" -ex "x/wx 0x8000004" -ex "file {build.project_name}.elf" -ex "load" -ex "x/wx 0x08000004" -ex "tbreak main" -ex "run" -ex "echo \n\n\nUpload finished!" -ex "quit"
+tools.jlink_upload.cmd=jlink_upload.bat
+tools.jlink_upload.cmd.windows=jlink_upload.bat
+tools.jlink_upload.cmd.macosx=jlink_upload
+tools.jlink_upload.path={runtime.hardware.path}/tools/win
+tools.jlink_upload.path.macosx={runtime.hardware.path}/tools/macosx
+tools.jlink_upload.path.linux={runtime.hardware.path}/tools/linux
+tools.jlink_upload.path.linux64={runtime.hardware.path}/tools/linux64
+tools.jlink_upload.upload.params.verbose=-d
+tools.jlink_upload.upload.params.quiet=n
+tools.jlink_upload.upload.pattern="{path}/{cmd}" "{build.path}/{build.project_name}.bin"
+tools.stlink_upload.path={runtime.hardware.path}/tools/win
+vm.platform.root.path=C:\Program Files (x86)\Atmel\Studio\7.0\Extensions\hxbvmkwz.muh\Micro Platforms\arduino16x
+runtime.tools.arduinoOTA.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\arduinoOTA\1.0.0
+runtime.tools.arduinoOTA-1.0.0.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\arduinoOTA\1.0.0
+runtime.tools.arm-none-eabi-gcc.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\arm-none-eabi-gcc\4.8.3-2014q1
+runtime.tools.arm-none-eabi-gcc-4.8.3-2014q1.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\arm-none-eabi-gcc\4.8.3-2014q1
+runtime.tools.avrdude.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\avrdude\6.3.0-arduino8
+runtime.tools.avrdude-6.3.0-arduino6.path=C:\Program Files (x86)\Arduino\hardware\tools\avr
+runtime.tools.avrdude-6.3.0-arduino8.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\avrdude\6.3.0-arduino8
+runtime.tools.avr-gcc.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.3-arduino2
+runtime.tools.avr-gcc-4.9.2-atmel3.5.3-arduino2.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.3-arduino2
+runtime.tools.bossac.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\bossac\1.7.0
+runtime.tools.bossac-1.6.1-arduino.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\bossac\1.6.1-arduino
+runtime.tools.bossac-1.7.0.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\bossac\1.7.0
+runtime.tools.CMSIS.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\CMSIS\4.0.0-atmel
+runtime.tools.CMSIS-4.0.0-atmel.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\CMSIS\4.0.0-atmel
+runtime.tools.esptool.path=C:\Users\jp\AppData\Local\arduino15\packages\esp8266\tools\esptool\0.4.9
+runtime.tools.esptool-0.4.9.path=C:\Users\jp\AppData\Local\arduino15\packages\esp8266\tools\esptool\0.4.9
+runtime.tools.mkspiffs.path=C:\Users\jp\AppData\Local\arduino15\packages\esp8266\tools\mkspiffs\0.1.2
+runtime.tools.mkspiffs-0.1.2.path=C:\Users\jp\AppData\Local\arduino15\packages\esp8266\tools\mkspiffs\0.1.2
+runtime.tools.openocd.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\openocd\0.9.0-arduino
+runtime.tools.openocd-0.9.0-arduino.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\openocd\0.9.0-arduino
+runtime.tools.tools-avr.path=C:\Program Files (x86)\Arduino\hardware\tools\avr
+runtime.tools.xtensa-lx106-elf-gcc.path=C:\Users\jp\AppData\Local\arduino15\packages\esp8266\tools\xtensa-lx106-elf-gcc\1.20.0-26-gb404fb9-2
+runtime.tools.xtensa-lx106-elf-gcc-1.20.0-26-gb404fb9-2.path=C:\Users\jp\AppData\Local\arduino15\packages\esp8266\tools\xtensa-lx106-elf-gcc\1.20.0-26-gb404fb9-2
+runtime.vm.boardinfo.id=Arduino_STM32_genericSTM32F103C
+runtime.vm.boardinfo.name=Arduino_STM32_genericSTM32F103C
+runtime.vm.boardinfo.desc=Generic STM32F103C series
+runtime.vm.boardinfo.src_location=C:\Users\jp\Documents\Arduino\hardware\Arduino_STM32\STM32F1
+ide.hint=Use installed IDE. Provides built-in hardware, reference/help and libraries.
+ide.location.key=Arduino16x
+ide.location.ide.winreg=Arduino 1.6.x Application
+ide.location.sketchbook.winreg=Arduino 1.6.x Sketchbook
+ide.location.sketchbook.preferences=sketchbook.path
+ide.default.revision_name=1.8.0
+ide.default.version=10800
+ide.default.package=arduino
+ide.default.platform=avr
+ide.multiplatform=true
+ide.includes=arduino.h
+ide.exe_name=arduino
+ide.platformswithoutpackage=false
+ide.includes.fallback=wprogram.h
+ide.extension=ino
+ide.extension.fallback=pde
+ide.versionGTEQ=160
+ide.exe=arduino.exe
+ide.hosts=atmel
+ide.url=http://arduino.cc/en/Main/Software
+ide.help.reference.path=reference
+ide.help.reference.path2=reference\www.arduino.cc\en\Reference
+ide.help.reference.serial=reference\www.arduino.cc\en\Serial
+vm.debug=true
+software=ARDUINO
+ssh.user.name=root
+ssh.user.default.password=arduino
+ssh.host.wwwfiles.path=/www/sd
+build.working_directory={runtime.ide.path}\java\bin
+ide.location.preferences.portable={runtime.ide.path}\portable
+ide.location.preferences.arduinoData={runtime.sketchbook.path}\ArduinoData
+ide.location.preferences=%VM_APPDATA_LOCAL%\arduino15\preferences.txt
+ide.location.preferences_fallback=%VM_APPDATA_ROAMING%\arduino15\preferences.txt
+ide.location.contributions=%VM_APPDATA_LOCAL%\arduino15
+ide.location.contributions_fallback=%VM_APPDATA_ROAMING%\arduino15
+ide.contributions.boards.allow=true
+ide.contributions.boards.ignore_unless_rewrite_found=true
+ide.contributions.libraries.allow=true
+ide.contributions.boards.support.urls.wiki=https://github.com/arduino/Arduino/wiki/Unofficial-list-of-3rd-party-boards-support-urls
+ide.create_platforms_from_boardsTXT.teensy=build.core
+ide.appid=arduino16x
+location.sketchbook=C:\Users\jp\Documents\Arduino
+build.core.path=C:\Users\jp\Documents\Arduino\hardware\Arduino_STM32\STM32F1\cores\maple
+vm.core.include=arduino.h
+vm.boardsource.path=C:\Users\jp\Documents\Arduino\hardware\Arduino_STM32\STM32F1
+runtime.platform.path=C:\Users\jp\Documents\Arduino\hardware\Arduino_STM32\STM32F1
+vm.platformname.name=STM32F1
+build.arch=STM32F1
+</arduino.board.property_bag>
+        <arduino.build.mcu>cortex-m3</arduino.build.mcu>
+        <arduino.build.f_cpu>72000000L</arduino.build.f_cpu>
+        <arduino.build.core>maple</arduino.build.core>
+        <visualmicro.application.name>arduino16x</visualmicro.application.name>
+        <visualmicro.package.name>Arduino_STM32</visualmicro.package.name>
+        <visualmicro.platform.name>STM32F1</visualmicro.platform.name>
+        <arduino.upload.port>COM5</arduino.upload.port>
+      </VisualMicroSettings>
+    </VisualMicroSettings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <ToolchainSettings>
+      <AvrGccCpp>
+  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>ARDUINO=106013</Value>
+      <Value>ARDUINO_MAIN</Value>
+      <Value>F_CPU=72000000L</Value>
+      <Value>printf=iprintf</Value>
+      <Value>__STM32F1__</Value>
+      <Value>DEBUG_LEVEL=DEBUG_NONE</Value>
+      <Value>BOARD_generic_stm32f103c</Value>
+      <Value>VECT_TAB_ADDR=0x8000000</Value>
+      <Value>ERROR_LED_PORT=GPIOB</Value>
+      <Value>ERROR_LED_PIN=1</Value>
+      <Value>ARDUINO_GENERIC_STM32F103C</Value>
+      <Value>ARDUINO_ARCH_STM32F1</Value>
+    </ListValues>
+  </avrgcc.compiler.symbols.DefSymbols>
+  <avrgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/Arduino-IRremote-master</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/libraries/EEPROM</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/IRLib2</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/IRLibProtocols</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/IRLibRecvPCI</Value>
+      <Value>C:/Program Files (x86)/Arduino/libraries</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/libraries</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/avr</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/libmaple</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/stm32f1</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/variants/generic_stm32f103c</Value>
+      <Value>../../../karadioUCglib</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/include</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/stm32f1/include</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/usb/stm32f1</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/usb/usb_lib</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/4.8.3-2014q1/include</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/arm-none-eabi/include</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/lib/gcc/arm-none-eabi/4.8.3/include</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/lib/gcc/arm-none-eabi/4.8.3/include/</Value>
+    </ListValues>
+  </avrgcc.compiler.directories.IncludePaths>
+  <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
+  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+  <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcccpp.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>ARDUINO=106013</Value>
+      <Value>ARDUINO_MAIN</Value>
+      <Value>F_CPU=72000000L</Value>
+      <Value>printf=iprintf</Value>
+      <Value>__STM32F1__</Value>
+      <Value>DEBUG_LEVEL=DEBUG_NONE</Value>
+      <Value>BOARD_generic_stm32f103c</Value>
+      <Value>VECT_TAB_ADDR=0x8000000</Value>
+      <Value>ERROR_LED_PORT=GPIOB</Value>
+      <Value>ERROR_LED_PIN=1</Value>
+      <Value>ARDUINO_GENERIC_STM32F103C</Value>
+      <Value>ARDUINO_ARCH_STM32F1</Value>
+    </ListValues>
+  </avrgcccpp.compiler.symbols.DefSymbols>
+  <avrgcccpp.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/Arduino-IRremote-master</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/libraries/EEPROM</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/IRLib2</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/IRLibProtocols</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries/IRLibRecvPCI</Value>
+      <Value>C:/Program Files (x86)/Arduino/libraries</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/libraries</Value>
+      <Value>C:/Users/jp/Documents/Arduino/libraries</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/avr</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/libmaple</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/stm32f1</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/variants/generic_stm32f103c</Value>
+      <Value>../../../karadioUCglib</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/include</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/stm32f1/include</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/usb/stm32f1</Value>
+      <Value>C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/usb/usb_lib</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/4.8.3-2014q1/include</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/arm-none-eabi/include</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/lib/gcc/arm-none-eabi/4.8.3/include</Value>
+      <Value>C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/lib/gcc/arm-none-eabi/4.8.3/include/</Value>
+    </ListValues>
+  </avrgcccpp.compiler.directories.IncludePaths>
+  <avrgcccpp.compiler.optimization.level>Optimize (-O1)</avrgcccpp.compiler.optimization.level>
+  <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
+  <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcccpp.compiler.optimization.DebugLevel>Default (-g2)</avrgcccpp.compiler.optimization.DebugLevel>
+  <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
+  <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
+</AvrGccCpp>
+    </ToolchainSettings>
+    <VMSETTING_IncludePaths>C:/Users/jp/Documents/Arduino/libraries/Arduino-IRremote-master;C:/Users/jp/Documents/Arduino/libraries/Arduino-IRremote-master/utility;C:/Users/jp/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/EEPROM/src;C:/Users/jp/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/EEPROM/src/utility;C:/Users/jp/Documents/Arduino/libraries/IRLib2;C:/Users/jp/Documents/Arduino/libraries/IRLib2/utility;C:/Users/jp/Documents/Arduino/libraries/IRLibProtocols;C:/Users/jp/Documents/Arduino/libraries/IRLibProtocols/utility;C:/Users/jp/Documents/Arduino/libraries/IRLibRecvPCI;C:/Users/jp/Documents/Arduino/libraries/IRLibRecvPCI/utility;C:/Program Files (x86)/Arduino/libraries;C:/Users/jp/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries;C:/Users/jp/Documents/Arduino/libraries;C:/Users/jp/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino;C:/Users/jp/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/variants/micro;../../../karadioUCglib;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2//avr/include/avr/;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/jp/Documents/Arduino/libraries/U8glib;C:/Users/jp/Documents/Arduino/libraries/U8glib/utility;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/avr/;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/lib/gcc/avr/4.9.2/include;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/libraries/EEPROM;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/libraries;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/avr;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/libmaple;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/cores/maple/stm32f1;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/variants/generic_stm32f103c;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/include;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/stm32f1/include;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/usb/stm32f1;C:/Users/jp/Documents/Arduino/hardware/Arduino_STM32/STM32F1/system/libmaple/usb/usb_lib;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/4.8.3-2014q1/include;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/arm-none-eabi/include;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/lib/gcc/arm-none-eabi/4.8.3/include;C:/Users/jp/AppData/Local/arduino15/packages/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1/lib/gcc/arm-none-eabi/4.8.3/include/;</VMSETTING_IncludePaths>
+    <VisualMicroSettings>
+      <VisualMicroSettings>
+        <arduino.board.name>Arduino_STM32_genericSTM32F103C</arduino.board.name>
+        <arduino.board.desc>Generic STM32F103C series</arduino.board.desc>
+        <arduino.board.property_bag>name=Generic STM32F103C series
+vid.0=0x1EAF
+pid.0=0x0004
+build.variant=generic_stm32f103c
+build.vect=VECT_TAB_ADDR=0x8000000
+build.core=maple
+build.board=GENERIC_STM32F103C
+upload.use_1200bps_touch=false
+upload.file_type=bin
+upload.auto_reset=true
+menu.device_variant.STM32F103C8=STM32F103C8 (20k RAM. 64k Flash)
+menu.device_variant.STM32F103C8.build.cpu_flags=-DMCU_STM32F103C8
+menu.device_variant.STM32F103C8.build.ldscript=ld/jtag_c8.ld
+menu.device_variant.STM32F103C8.upload.maximum_size=65536
+menu.device_variant.STM32F103C8.upload.ram.maximum_size=20480
+menu.device_variant.STM32F103C8.upload.flash.maximum_size=65536
+menu.device_variant.STM32F103CB=STM32F103CB (20k RAM. 128k Flash)
+menu.device_variant.STM32F103CB.build.cpu_flags=-DMCU_STM32F103CB
+menu.device_variant.STM32F103CB.build.ldscript=ld/jtag.ld
+menu.device_variant.STM32F103CB.upload.maximum_size=131072
+menu.device_variant.STM32F103CB.upload.ram.maximum_size=20480
+menu.device_variant.STM32F103CB.upload.flash.maximum_size=131072
+menu.upload_method.DFUUploadMethod=STM32duino bootloader
+menu.upload_method.DFUUploadMethod.upload.protocol=maple_dfu
+menu.upload_method.DFUUploadMethod.upload.tool=maple_upload
+menu.upload_method.DFUUploadMethod.build.upload_flags=-DSERIAL_USB -DGENERIC_BOOTLOADER -DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG=1
+menu.upload_method.DFUUploadMethod.build.vect=VECT_TAB_ADDR=0x8002000
+menu.upload_method.DFUUploadMethod.build.ldscript=ld/bootloader_20.ld
+menu.upload_method.DFUUploadMethod.upload.usbID=1EAF:0003
+menu.upload_method.DFUUploadMethod.upload.altID=2
+menu.upload_method.serialMethod=Serial
+menu.upload_method.serialMethod.upload.protocol=maple_serial
+menu.upload_method.serialMethod.upload.tool=serial_upload
+menu.upload_method.serialMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG
+menu.upload_method.STLinkMethod=STLink
+menu.upload_method.STLinkMethod.upload.protocol=STLink
+menu.upload_method.STLinkMethod.upload.tool=stlink_upload
+menu.upload_method.STLinkMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG=1 -DSERIAL_USB -DGENERIC_BOOTLOADER
+menu.upload_method.BMPMethod=BMP (Black Magic Probe)
+menu.upload_method.BMPMethod.upload.protocol=gdb_bmp
+menu.upload_method.BMPMethod.upload.tool=bmp_upload
+menu.upload_method.BMPMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG
+menu.upload_method.jlinkMethod=JLink
+menu.upload_method.jlinkMethod.upload.protocol=jlink
+menu.upload_method.jlinkMethod.upload.tool=jlink_upload
+menu.upload_method.jlinkMethod.build.upload_flags=-DCONFIG_MAPLE_MINI_NO_DISABLE_DEBUG=1 -DSERIAL_USB -DGENERIC_BOOTLOADER
+menu.cpu_speed.speed_72mhz=72Mhz (Normal)
+menu.cpu_speed.speed_72mhz.build.f_cpu=72000000L
+menu.cpu_speed.speed_48mhz=48Mhz (Slow - with USB)
+menu.cpu_speed.speed_48mhz.build.f_cpu=48000000L
+runtime.ide.path=C:\Program Files (x86)\Arduino
+runtime.os=windows
+build.system.path=C:\Users\jp\Documents\Arduino\hardware\Arduino_STM32\STM32F1\system
+runtime.ide.version=106013
+target_package=Arduino_STM32
+target_platform=STM32F1
+runtime.hardware.path=C:\Users\jp\Documents\Arduino\hardware\Arduino_STM32
+originalid=genericSTM32F103C
+version=0.1.2
+compiler.warning_flags=-w -DDEBUG_LEVEL=DEBUG_NONE
+compiler.warning_flags.none=-w -DDEBUG_LEVEL=DEBUG_NONE
+compiler.warning_flags.default=-DDEBUG_LEVEL=DEBUG_NONE
+compiler.warning_flags.more=-Wall -DDEBUG_LEVEL=DEBUG_FAULT
+compiler.warning_flags.all=-Wall -Wextra -DDEBUG_LEVEL=DEBUG_ALL
+compiler.path={runtime.tools.arm-none-eabi-gcc.path}/bin/
+compiler.c.cmd=arm-none-eabi-gcc
+compiler.c.flags=-c -g -Os {compiler.warning_flags} -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -DBOARD_{build.variant} -D{build.vect} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin}
+compiler.c.elf.cmd=arm-none-eabi-g++
+compiler.c.elf.flags=-Os -Wl,--gc-sections
+compiler.S.cmd=arm-none-eabi-gcc
+compiler.S.flags=-c -g -x assembler-with-cpp -MMD
+compiler.cpp.cmd=arm-none-eabi-g++
+compiler.cpp.flags=-c -g -Os {compiler.warning_flags} -MMD -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -DBOARD_{build.variant} -D{build.vect} -DERROR_LED_PORT={build.error_led_port} -DERROR_LED_PIN={build.error_led_pin}
+compiler.ar.cmd=arm-none-eabi-ar
+compiler.ar.flags=rcs
+compiler.objcopy.cmd=arm-none-eabi-objcopy
+compiler.objcopy.eep.flags=-O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0
+compiler.elf2hex.flags=-O binary
+compiler.elf2hex.cmd=arm-none-eabi-objcopy
+compiler.ldflags=
+compiler.size.cmd=arm-none-eabi-size
+compiler.define=-DARDUINO=
+build.f_cpu=72000000L
+build.mcu=cortex-m3
+build.common_flags=-mthumb  -march=armv7-m -D__STM32F1__
+build.variant_system_lib=libmaple.a
+build.error_led_port=GPIOB
+build.error_led_pin=1
+build.cpu_flags=
+build.hs_flag=
+build.upload_flags=
+build.extra_flags={build.upload_flags} {build.cpu_flags} {build.hs_flag} {build.common_flags}
+compiler.c.extra_flags=
+compiler.c.elf.extra_flags="-L{build.variant.path}/ld"
+compiler.cpp.extra_flags=
+compiler.S.extra_flags=
+compiler.ar.extra_flags=
+compiler.elf2hex.extra_flags=
+compiler.libs.c.flags="-I{build.system.path}/libmaple" "-I{build.system.path}/libmaple/include" "-I{build.system.path}/libmaple/stm32f1/include"                                                           "-I{build.system.path}/libmaple/usb/stm32f1" "-I{build.system.path}/libmaple/usb/usb_lib"
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.c.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.c.extra_flags} {build.extra_flags} {compiler.libs.c.flags} {includes} "{source_file}" -o "{object_file}"
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.cpp.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.cpp.extra_flags} {build.extra_flags} {build.cpu_flags} {build.hs_flag} {build.common_flags} {compiler.libs.c.flags} {includes} "{source_file}" -o "{object_file}"
+recipe.S.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.S.flags} -mcpu={build.mcu} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} {compiler.S.extra_flags} {build.extra_flags} {build.cpu_flags} {build.hs_flag} {build.common_flags} {compiler.libs.c.flags} {includes} "{source_file}" -o "{object_file}"
+recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compiler.ar.extra_flags} "{archive_file_path}" "{object_file}"
+recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.flags} -mcpu={build.mcu} "-T{build.variant.path}/{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" {compiler.c.elf.extra_flags} -o "{build.path}/{build.project_name}.elf" "-L{build.path}" -lm -lgcc -mthumb -Wl,--cref -Wl,--check-sections -Wl,--gc-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align -Wl,--warn-unresolved-symbols -Wl,--start-group {object_files} "{build.path}/{archive_file}" -Wl,--end-group
+recipe.objcopy.eep.pattern=
+recipe.objcopy.hex.pattern="{compiler.path}{compiler.elf2hex.cmd}" {compiler.elf2hex.flags} {compiler.elf2hex.extra_flags} "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.bin"
+recipe.size.pattern="{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.elf"
+recipe.size.regex=^(?:\.text|\.data|\.rodata|\.text.align|\.ARM.exidx)\s+([0-9]+).*
+recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
+recipe.output.tmp_file={build.project_name}.bin
+recipe.output.save_file={build.project_name}.{build.variant}.bin
+tools.maple_upload.cmd=maple_upload.bat
+tools.maple_upload.cmd.windows=maple_upload.bat
+tools.maple_upload.path={runtime.hardware.path}/tools/win
+tools.maple_upload.path.macosx={runtime.hardware.path}/tools/macosx
+tools.maple_upload.path.linux={runtime.hardware.path}/tools/linux
+tools.maple_upload.path.linux64={runtime.hardware.path}/tools/linux64
+tools.maple_upload.upload.params.verbose=-d
+tools.maple_upload.upload.params.quiet=
+tools.maple_upload.upload.pattern="{path}/{cmd}" {serial.port.file} {upload.altID} {upload.usbID} "{build.path}/{build.project_name}.bin"
+tools.serial_upload.cmd=serial_upload.bat
+tools.serial_upload.cmd.windows=serial_upload.bat
+tools.serial_upload.cmd.macosx=serial_upload
+tools.serial_upload.path={runtime.hardware.path}/tools/win
+tools.serial_upload.path.macosx={runtime.hardware.path}/tools/macosx
+tools.serial_upload.path.linux={runtime.hardware.path}/tools/linux
+tools.serial_upload.path.linux64={runtime.hardware.path}/tools/linux64
+tools.serial_upload.upload.params.verbose=-d
+tools.serial_upload.upload.params.quiet=n
+tools.serial_upload.upload.pattern="{path}/{cmd}" {serial.port.file} {upload.altID} {upload.usbID} "{build.path}/{build.project_name}.bin"
+tools.stlink_upload.cmd=stlink_upload.bat
+tools.stlink_upload.cmd.windows=stlink_upload.bat
+tools.stlink_upload.path.windows={runtime.hardware.path}/tools/win
+tools.stlink_upload.path.macosx={runtime.hardware.path}/tools/macosx
+tools.stlink_upload.path.linux={runtime.hardware.path}/tools/linux
+tools.stlink_upload.path.linux64={runtime.hardware.path}/tools/linux64
+tools.stlink_upload.upload.params.verbose=-d
+tools.stlink_upload.upload.params.quiet=
+tools.stlink_upload.upload.pattern="{path}/{cmd}" {serial.port.file} {upload.altID} {upload.usbID} "{build.path}/{build.project_name}.bin"
+tools.bmp_upload.cmd=arm-none-eabi-gdb
+tools.bmp_upload.path={runtime.tools.arm-none-eabi-gcc.path}/bin/
+tools.bmp_upload.upload.speed=230400
+tools.bmp_upload.upload.params.verbose=
+tools.bmp_upload.upload.params.quiet=-q --batch-silent
+tools.bmp_upload.upload.pattern="{path}{cmd}" -cd "{build.path}" -b {upload.speed} {upload.verbose} -ex "set debug remote 0" -ex "set target-async off" -ex "set remotetimeout 60" -ex "set mem inaccessible-by-default off" -ex "set confirm off" -ex "set height 0" -ex "target extended-remote {serial.port}" -ex "monitor swdp_scan" -ex "attach 1" -ex "x/wx 0x8000004" -ex "monitor erase_mass" -ex "echo 0x8000004 expect 0xffffffff after erase\n" -ex "x/wx 0x8000004" -ex "file {build.project_name}.elf" -ex "load" -ex "x/wx 0x08000004" -ex "tbreak main" -ex "run" -ex "echo \n\n\nUpload finished!" -ex "quit"
+tools.jlink_upload.cmd=jlink_upload.bat
+tools.jlink_upload.cmd.windows=jlink_upload.bat
+tools.jlink_upload.cmd.macosx=jlink_upload
+tools.jlink_upload.path={runtime.hardware.path}/tools/win
+tools.jlink_upload.path.macosx={runtime.hardware.path}/tools/macosx
+tools.jlink_upload.path.linux={runtime.hardware.path}/tools/linux
+tools.jlink_upload.path.linux64={runtime.hardware.path}/tools/linux64
+tools.jlink_upload.upload.params.verbose=-d
+tools.jlink_upload.upload.params.quiet=n
+tools.jlink_upload.upload.pattern="{path}/{cmd}" "{build.path}/{build.project_name}.bin"
+tools.stlink_upload.path={runtime.hardware.path}/tools/win
+vm.platform.root.path=C:\Program Files (x86)\Atmel\Studio\7.0\Extensions\hxbvmkwz.muh\Micro Platforms\arduino16x
+runtime.tools.arduinoOTA.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\arduinoOTA\1.0.0
+runtime.tools.arduinoOTA-1.0.0.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\arduinoOTA\1.0.0
+runtime.tools.arm-none-eabi-gcc.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\arm-none-eabi-gcc\4.8.3-2014q1
+runtime.tools.arm-none-eabi-gcc-4.8.3-2014q1.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\arm-none-eabi-gcc\4.8.3-2014q1
+runtime.tools.avrdude.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\avrdude\6.3.0-arduino8
+runtime.tools.avrdude-6.3.0-arduino6.path=C:\Program Files (x86)\Arduino\hardware\tools\avr
+runtime.tools.avrdude-6.3.0-arduino8.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\avrdude\6.3.0-arduino8
+runtime.tools.avr-gcc.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.3-arduino2
+runtime.tools.avr-gcc-4.9.2-atmel3.5.3-arduino2.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\avr-gcc\4.9.2-atmel3.5.3-arduino2
+runtime.tools.bossac.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\bossac\1.7.0
+runtime.tools.bossac-1.6.1-arduino.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\bossac\1.6.1-arduino
+runtime.tools.bossac-1.7.0.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\bossac\1.7.0
+runtime.tools.CMSIS.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\CMSIS\4.0.0-atmel
+runtime.tools.CMSIS-4.0.0-atmel.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\CMSIS\4.0.0-atmel
+runtime.tools.esptool.path=C:\Users\jp\AppData\Local\arduino15\packages\esp8266\tools\esptool\0.4.9
+runtime.tools.esptool-0.4.9.path=C:\Users\jp\AppData\Local\arduino15\packages\esp8266\tools\esptool\0.4.9
+runtime.tools.mkspiffs.path=C:\Users\jp\AppData\Local\arduino15\packages\esp8266\tools\mkspiffs\0.1.2
+runtime.tools.mkspiffs-0.1.2.path=C:\Users\jp\AppData\Local\arduino15\packages\esp8266\tools\mkspiffs\0.1.2
+runtime.tools.openocd.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\openocd\0.9.0-arduino
+runtime.tools.openocd-0.9.0-arduino.path=C:\Users\jp\AppData\Local\arduino15\packages\arduino\tools\openocd\0.9.0-arduino
+runtime.tools.tools-avr.path=C:\Program Files (x86)\Arduino\hardware\tools\avr
+runtime.tools.xtensa-lx106-elf-gcc.path=C:\Users\jp\AppData\Local\arduino15\packages\esp8266\tools\xtensa-lx106-elf-gcc\1.20.0-26-gb404fb9-2
+runtime.tools.xtensa-lx106-elf-gcc-1.20.0-26-gb404fb9-2.path=C:\Users\jp\AppData\Local\arduino15\packages\esp8266\tools\xtensa-lx106-elf-gcc\1.20.0-26-gb404fb9-2
+runtime.vm.boardinfo.id=Arduino_STM32_genericSTM32F103C
+runtime.vm.boardinfo.name=Arduino_STM32_genericSTM32F103C
+runtime.vm.boardinfo.desc=Generic STM32F103C series
+runtime.vm.boardinfo.src_location=C:\Users\jp\Documents\Arduino\hardware\Arduino_STM32\STM32F1
+ide.hint=Use installed IDE. Provides built-in hardware, reference/help and libraries.
+ide.location.key=Arduino16x
+ide.location.ide.winreg=Arduino 1.6.x Application
+ide.location.sketchbook.winreg=Arduino 1.6.x Sketchbook
+ide.location.sketchbook.preferences=sketchbook.path
+ide.default.revision_name=1.8.0
+ide.default.version=10800
+ide.default.package=arduino
+ide.default.platform=avr
+ide.multiplatform=true
+ide.includes=arduino.h
+ide.exe_name=arduino
+ide.platformswithoutpackage=false
+ide.includes.fallback=wprogram.h
+ide.extension=ino
+ide.extension.fallback=pde
+ide.versionGTEQ=160
+ide.exe=arduino.exe
+ide.hosts=atmel
+ide.url=http://arduino.cc/en/Main/Software
+ide.help.reference.path=reference
+ide.help.reference.path2=reference\www.arduino.cc\en\Reference
+ide.help.reference.serial=reference\www.arduino.cc\en\Serial
+vm.debug=true
+software=ARDUINO
+ssh.user.name=root
+ssh.user.default.password=arduino
+ssh.host.wwwfiles.path=/www/sd
+build.working_directory={runtime.ide.path}\java\bin
+ide.location.preferences.portable={runtime.ide.path}\portable
+ide.location.preferences.arduinoData={runtime.sketchbook.path}\ArduinoData
+ide.location.preferences=%VM_APPDATA_LOCAL%\arduino15\preferences.txt
+ide.location.preferences_fallback=%VM_APPDATA_ROAMING%\arduino15\preferences.txt
+ide.location.contributions=%VM_APPDATA_LOCAL%\arduino15
+ide.location.contributions_fallback=%VM_APPDATA_ROAMING%\arduino15
+ide.contributions.boards.allow=true
+ide.contributions.boards.ignore_unless_rewrite_found=true
+ide.contributions.libraries.allow=true
+ide.contributions.boards.support.urls.wiki=https://github.com/arduino/Arduino/wiki/Unofficial-list-of-3rd-party-boards-support-urls
+ide.create_platforms_from_boardsTXT.teensy=build.core
+ide.appid=arduino16x
+location.sketchbook=C:\Users\jp\Documents\Arduino
+build.core.path=C:\Users\jp\Documents\Arduino\hardware\Arduino_STM32\STM32F1\cores\maple
+vm.core.include=arduino.h
+vm.boardsource.path=C:\Users\jp\Documents\Arduino\hardware\Arduino_STM32\STM32F1
+runtime.platform.path=C:\Users\jp\Documents\Arduino\hardware\Arduino_STM32\STM32F1
+vm.platformname.name=STM32F1
+build.arch=STM32F1
+</arduino.board.property_bag>
+        <arduino.build.mcu>cortex-m3</arduino.build.mcu>
+        <arduino.build.f_cpu>72000000L</arduino.build.f_cpu>
+        <arduino.build.core>maple</arduino.build.core>
+        <visualmicro.application.name>arduino16x</visualmicro.application.name>
+        <visualmicro.package.name>Arduino_STM32</visualmicro.package.name>
+        <visualmicro.platform.name>STM32F1</visualmicro.platform.name>
+        <arduino.upload.port>COM5</arduino.upload.port>
+      </VisualMicroSettings>
+    </VisualMicroSettings>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="karadioUCglib.ino">
+      <SubType>compile</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="__vm\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ucglibConf.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="__vm\.karadioUCglib.vsarduino.h">
+      <SubType>compile</SubType>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
+</Project>
