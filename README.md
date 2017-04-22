@@ -11,4 +11,6 @@ See the Karadio project at https://github.com/karawin/Ka-Radio
 
 To add your own addon, please send me a zip with all files in a directory and a readme.txt.
 
-<img src="https://github.com/karawin/karadio-addons/blob/master/images/2017-04-21%2016.57.11.jpg" alt="screenshot" border=0>
+<img src="https://github.com/karawin/karadio-addons/blob/master/images/2017-04-21%2016.57.11.jpg" alt="screenshot" border=0 style="width:200px; >
+<img src="https://github.com/karawin/karadio-addons/blob/master/images/2017-04-17%2021.56.24.jpg" alt="screenshot" border=0 style="width:200px;>
+<img src="https://github.com/karawin/karadio-addons/blob/master/images/2017-04-17%2021.56.12.jpg" alt="screenshot" border=0 style="width:200px;>
