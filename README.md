@@ -10,3 +10,5 @@ See the Karadio project at https://github.com/karawin/Ka-Radio
   karadioUCSTM32: A complete interface with a color lcd, IR sensor, encoder knob. Based on a low cost STM32 board.
 
 To add your own addon, please send me a zip with all files in a directory and a readme.txt.
+
+<img src="https://github.com/karawin/karadio-addons/blob/master/images/2017-04-21%2016.57.11.jpg" alt="screenshot" border=0>
