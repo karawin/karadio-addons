@@ -16,6 +16,6 @@ To add your own addon, please send me a zip with all files in a directory and a 
 </p>
 
 Some images from these goodies:<br>
-<img src="https://github.com/karawin/karadio-addons/blob/master/images/2017-04-21%2016.57.11.jpg" alt="screenshot" border=0 style="width:200px;" ><br>
-<img src="https://github.com/karawin/karadio-addons/blob/master/images/2017-04-17%2021.56.24.jpg" alt="screenshot" border=0 style="width:200px;"><br>
-<img src="https://github.com/karawin/karadio-addons/blob/master/images/2017-04-17%2021.56.12.jpg" alt="screenshot" border=0 style="width:200px;"><br>
+<img src="https://github.com/karawin/karadio-addons/blob/master/images/2017-04-21%2016.57.11.jpg" alt="screenshot" border=0 width="420" ><br>
+<img src="https://github.com/karawin/karadio-addons/blob/master/images/2017-04-17%2021.56.24.jpg" alt="screenshot" border=0 width="420"><br>
+<img src="https://github.com/karawin/karadio-addons/blob/master/images/2017-04-17%2021.56.12.jpg" alt="screenshot" border=0 width="420" ><br>
