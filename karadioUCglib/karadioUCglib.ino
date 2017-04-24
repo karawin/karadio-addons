@@ -3,18 +3,23 @@
   Karadioucglib.pde
   
 */
-// no IR for stm32
-#if !defined(__STM32F1__)
+
 //-------------------------------------------------------
 // UnComment the following lines if you want the IR remote
 #define IR
+// Uncomment the following line to use the IRLib2 library
 #define IRLib2
 //-------------------------------------------------------
-#endif
 
+// your timezone offset
+#define TZO 1
+
+#undef SERIAL_RX_BUFFER_SIZE
+#define SERIAL_RX_BUFFER_SIZE 128
 #include "ucglibConf.h"
 #include <EEPROM.h>
-
+#include <time.h>
+#include <avr/pgmspace.h>
 #ifdef IR
 #ifdef IRLib2
 #include <IRLibDecodeBase.h>
@@ -38,22 +43,11 @@
 #endif
 #endif
 
-#if defined(__AVR_ATmega328P__)
 #define SERIALX Serial
 // the pin_playing is high when playing
 #define PIN_PLAYING 5
 #define PIN_LED 6
-#elif defined(__STM32F1__)
-#define SERIALX Serial1
-#define PIN_LED PC13
-#define PIN_PLAYING PB6
-#else
-#define SERIALX Serial1
-#define PIN_PLAYING 5
-#define PIN_LED 6
-#endif
-
-
+#define  BAUD       28800   // any standard serial value: 300 - 115200
 
 // nams <--> num of line
 #define STATIONNAME 0
@@ -67,8 +61,8 @@
 #define TITLE21   6
 #define VOLUME    7
 
+
 // constants
-const int  BAUD            = 28800;  // any standard serial value: 300 - 115200
 const int  EEaddr          = 0;     // EEPROM address for storing WPM
 const int  EEaddr1         = 2;     // EEPROM address for LCD address
 const int  EEaddrIp        = 10;    // EEPROM address for the IP
@@ -87,41 +81,48 @@ IRrecv irrecv(PIN_IRRECV); // The IR
 decode_results results; 
 #endif
 #endif
-
 bool state = false; // start stop on Ok ir key
 //-----------
 #ifdef IR
 // Character array pointers
-   char  msg[]      = {"Karadio IR+clcd V1.1"}; //
+   char  msg2[]      = {"IR+clcd V1.1"}; //
 #else
-	 char  msg[]      = {"Karadio clcd V1.1"}; //
+	 char  msg2[]      = {"clcd V1.1"}; //
 #endif
    char  msg1[]    = {"(c) KaraWin"}; //
-   char  msg2[]    = {"https://hackaday.io/project/11570-wifi-webradio-with-esp8266-and-vs1053"};
+   char  msg[]    = {"Karadio"};
       
 // Karadio specific data
-#define BUFLEN  170
+#define BUFLEN  180
 #define LINES	8
 char line[BUFLEN]; // receive buffer
 char station[BUFLEN]; //received station
 char title[BUFLEN];	// received title
-char nameset[BUFLEN]; // the local name of the station
-byte volume;
+char nameset[BUFLEN/2]; // the local name of the station
 char nameNum[5]; // the number of the station
+char genre[BUFLEN/2]; // the local name of the station
 
 char* lline[LINES] ; // array of ptr of n lines 
 uint8_t  iline[LINES] ; //array of Rbindex for scrolling
 uint8_t  tline[LINES] ; // tempo at end or begin
 uint8_t  mline[LINES] ; // mark to display
-
+byte volume;
 unsigned  Rbindex = 0; // receive buffer Rbindex
-unsigned loopcount = 0; // loop counter
+unsigned loopScroll = 0;
+unsigned loopDate = 0;
 char oip[20];
 
 int16_t y ;		//Height between line
 int16_t yy;		//Height of screen
 int16_t x ;		//Width of the screen
 int16_t z ;		// an internal offset for y
+
+struct tm *dt;
+time_t timestamp = 0;
+bool syncTime = false;
+bool askDraw  = false;
+bool itAskTime = true;
+unsigned loopTime = 0;
 
 ////////////////////////////////////////
 //Setup all things, check for contrast adjust and show initial page.
@@ -138,6 +139,66 @@ void setup2(void)
   drawFrame();
   digitalWrite(PIN_PLAYING, LOW);
 }
+
+void setTimer2()
+{
+  cli();//stop interrupts
+  TCCR2A = 0;// set entire TCCR2A register to 0
+  TCCR2B = 0;// same for TCCR2B
+  TCNT2  = 0;//initialize counter value to 0
+  // set compare match register for 1khz increments
+  OCR2A = F_CPU/1000/64 -1;// (must be <256)
+  // turn on CTC mode
+  TCCR2A |= (1 << WGM21);
+  // Set CS21 bit for 64 prescaler
+  TCCR2B |= (1 << CS22) ;   
+  // enable timer compare interrupt
+  TIMSK2 |= (1 << OCIE2A);
+  sei();//allow interrupts
+}
+
+void setTimer1()
+{
+  //set timer1 interrupt at 4Hz
+  cli();//stop interrupts
+  TCCR1A = 0;// set entire TCCR1A register to 0
+  TCCR1B = 0;// same for TCCR1B
+  TCNT1  = 0;//initialize counter value to 0
+  // set compare match register for 4hz increments
+//  OCR1A = 15624;// = (16*10^6) / (1*1024) - 1 (must be <65536)
+  OCR1A = F_CPU/4096 -1;// = (16*10^6) / (2*1024) - 1 (must be <65536)
+  // turn on CTC mode
+  TCCR1B |= (1 << WGM12);
+  // Set CS10 and CS12 bits for 1024 prescaler
+  TCCR1B |= (1 << CS12) | (1 << CS10);  
+  // enable timer compare interrupt
+  TIMSK1 |= (1 << OCIE1A);
+  sei();//allow interrupts
+}
+
+ISR(TIMER2_COMPA_vect)
+{
+  cli();//stop interrupts
+  serial();
+  sei();//allow interrupts
+}
+
+ISR(TIMER1_COMPA_vect)
+{//timer1 interrupt 4Hz 
+  if (loopTime%4 ==0) // 1hz
+  {
+    timestamp++;  // time update 
+    loopDate++;
+    if (!syncTime) itAskTime=true; // first synchro if not done 
+    askDraw = true;  
+  }
+  loopScroll++; 
+  if ((++loopTime%7200) == 0) itAskTime=true; // refresh ntp time every 30Mn
+}
+
+
+
+
 //Setup all things, check for contrast adjust and show initial page.
 void setup(void) {
    char  msg3[] = {"Karadio"};
@@ -171,9 +232,9 @@ SERIALX.println("Setup");
   ucg.clearScreen();
   ucg.setRotate90();
   if (ucg.getWidth() == 84)
-  ucg.setFont(ucg_font_6x10_tf);
+  ucg.setFont(ucg_font_5x8_tf);
   else 
-  ucg.setFont(ucg_font_6x13_tf);
+  ucg.setFont(ucg_font_6x10_tf);
   ucg.setFontPosTop();
 // some constant data
   y = - ucg.getFontDescent()+ ucg.getFontAscent() +4; //interline
@@ -201,7 +262,9 @@ SERIALX.println("Setup");
   lline[3] = (char*)"IP:";
   lline[4] = oip;
   drawFrame();
-  delay(500);
+
+  setTimer2();
+  setTimer1();
 }
 
 
@@ -274,10 +337,9 @@ void eepromWriteStr(int addr, char* str)
 void separator(char* from)
 {
     char* interp;
-//    len = strlen(from);
     while (from[strlen(from)-1] == ' ') from[strlen(from)-1] = 0; // avoid blank at end
     while ((from[0] == ' ') ){ strcpy( from,from+1); }
-    interp=strstr(from," - ");
+    interp=strstr_PF(from,PSTR(" - "));
 	if (from == nameset) {lline[0] = nameset;lline[1] = NULL;lline[2] = NULL;return;}
 	if (interp != NULL)
 	{
@@ -333,28 +395,28 @@ void parse(char* line)
    removeUtf8((byte*)line);
    
  //////  reset of the esp
-   if ((ici=strstr(line,"VS Version")) != NULL) 
+   if ((ici=strstr_PF(line,PSTR("VS Version"))) != NULL) 
    {
       clearAll();
       setup2();
    }
    else
  ////// Meta title   
-   if ((ici=strstr(line,"META#: ")) != NULL)
+   if ((ici=strstr_PF(line,PSTR("META#: "))) != NULL)
    {     
      cleartitle(); 
      strcpy(title,ici+7);    
 	   separator(title); 
    } else 
     ////// ICY4 Description
-    if ((ici=strstr(line,"ICY4#: ")) != NULL)
+    if ((ici=strstr_PF(line,PSTR("ICY4#: "))) != NULL)
     {
 	    strcpy(title,ici+7);
 	    if (lline[GENRE] == NULL)lline[GENRE] = title;
       markDraw(GENRE);  
     } else 
  ////// ICY0 station name
-   if ((ici=strstr(line,"ICY0#: ")) != NULL)
+   if ((ici=strstr_PF(line,PSTR("ICY0#: "))) != NULL)
    {
 //      clearAll();
 	    if (strlen(ici+7) == 0) strcpy (station,nameset);
@@ -362,7 +424,7 @@ void parse(char* line)
 	    separator(station);
    } else
  ////// STOPPED  
-   if ((ici=strstr(line,"STOPPED")) != NULL)
+   if ((ici=strstr_PF(line,PSTR("STOPPED"))) != NULL)
    {
        digitalWrite(PIN_PLAYING, LOW);
 	     cleartitle();
@@ -372,14 +434,14 @@ void parse(char* line)
    }    
  /////// Station Ip      
    else  
-   if ((ici=strstr(line,"Station Ip: ")) != NULL) 
+   if ((ici=strstr_PF(line,PSTR("Station Ip: "))) != NULL) 
    {
        eepromReadStr(EEaddrIp, oip);
        if ( strcmp(oip,ici+12) != 0)
          eepromWriteStr(EEaddrIp,ici+12 ); 
    } else
  //////Nameset
-   if ((ici=strstr(line,"MESET#: ")) != NULL)  
+   if ((ici=strstr_PF(line,PSTR("MESET#: "))) != NULL)  
    {
      clearAll();
      strcpy(nameset,ici+8);
@@ -391,20 +453,39 @@ void parse(char* line)
      markDraw(STATIONNAME);          
    } else
  //////Playing
-   if ((ici=strstr(line,"YING#")) != NULL)  
+   if ((ici=strstr_PF(line,PSTR("YING#"))) != NULL)  
    {
 	   digitalWrite(PIN_PLAYING, HIGH);
-/*     if (strcmp(title,"STOPPED") == 0)
+     if (strcmp(title,"STOPPED") == 0)
      {
 		   title[0] = 0;
 		   separator(title);
-     }*/
+     }
    } else
  //////Volume
    if ((ici=strstr(line,"VOL#:")) != NULL)  
    {
       volume = atoi(ici+6);
       markDraw(VOLUME);  
+   }else
+ //////Date Time  ##SYS.DATE#: 2017-04-12T21:07:59+01:00
+   if ((ici=strstr(line,"SYS.DATE#:")) != NULL)  
+   {
+      char lstr[30];
+      if (*(ici+11) != '2')//// invalid date. try again later
+      {
+        askDraw = true;
+        return;
+      }
+      strcpy(lstr,ici+11);
+      dt = gmtime(&timestamp);
+      int year,month,day,hour,minute,second;
+      sscanf(lstr,"%04d-%02d-%02dT%02d:%02d:%02d",&(year),&(month),&(day),&(hour),&(minute),&(second));
+      dt->tm_year = year; dt->tm_mon = month; dt->tm_mday = day;
+      dt->tm_hour = hour; dt->tm_min = minute;dt->tm_sec =second;
+      dt->tm_year -= 1900;
+      timestamp = mktime(dt); 
+      syncTime = true;
    }
 }
 
@@ -414,8 +495,6 @@ void parse(char* line)
 void serial()
 {
     int temp;
-//    SERIALX.println("Serial");
-//    if (SERIALX.available() == 0) return;
     while ((temp=SERIALX.read()) != -1)
     {
 	    switch (temp)
@@ -431,9 +510,10 @@ void serial()
 				line[Rbindex++] = temp;
         if (Rbindex>BUFLEN-1) 
         {
-         line[Rbindex] = 0;
-         parse(line);
-         Rbindex = 0;
+          SERIALX.println(F("overflow"));
+          line[Rbindex] = 0;
+          parse(line);
+          Rbindex = 0;
         }       
 	    }
     }
@@ -448,11 +528,42 @@ void markDraw(int i)
 // draw the full screen
 void drawLines()
 {
+   char strsec[10]; 
+static    char strdteold[12];
+   char strdte[12];
+   unsigned xxx,len;
+  dt=gmtime(&timestamp);
+  if (x==84)
+  {
+    sprintf(strsec,"%02d:%02d:%02d", dt->tm_hour, dt->tm_min,dt->tm_sec);
+    sprintf(strdte,"%02d-%02d",dt->tm_mon,dt->tm_mday);
+  }
+  else
+  {
+    sprintf(strsec,"%02d:%02d:%02d", dt->tm_hour, dt->tm_min,dt->tm_sec);
+    sprintf(strdte,"%02d-%02d-%04d",dt->tm_mon,dt->tm_mday,dt->tm_year+1900);
+  }
      for (int i=0;i<LINES;i++)
      {
-      if (mline[i]) draw(i); 
-      serial();
+        if (mline[i]) draw(i); 
      }
+//time
+    ucg.setColor(0,0,0,0);
+    xxx = 3*x/4-(ucg.getStrWidth(strsec)/2);
+    len = ucg.getStrWidth(strsec);
+    ucg.drawBox(xxx,yy-2*y, len ,y); 
+    ucg.setColor(200,200,255);
+    ucg.drawString(xxx,yy-2*y,0,strsec); 
+    if (strcmp(strdte,strdteold) != 0)
+    {
+      xxx = x/4-(ucg.getStrWidth(strdte)/2);
+      len = ucg.getStrWidth(strdte);
+      ucg.setColor(0,0,0,0);
+      ucg.drawBox(xxx,yy-2*y, len ,y); 
+      ucg.setColor(200,200,255);
+      ucg.drawString(xxx,yy-2*y,0,strdte);
+      strcpy(strdteold,strdte);    
+    } 
 }
 ////////////////////
 void drawFrame()
@@ -462,7 +573,7 @@ void drawFrame()
     ucg.setColor(1,0,255,255);  
     ucg.drawGradientLine(0,(4*y) - (y/2)-5,x,0);
     ucg.setColor(0,255,255,255);  
-    ucg.drawBox(0,0,x-1,(x == 84)?10:13);  
+    ucg.drawBox(0,0,x,y);  
     for (int i=0;i<LINES;i++) draw(i);
 }
 //////////////////////////
@@ -485,19 +596,20 @@ void setColor(int i)
 // draw one line
 void draw(int i)
 {
-//  Serial.print("Draw ");Serial.print(i);Serial.print("  ");Serial.println(lline[i]);
+
+//  SERIALX.print("Draw ");SERIALX.print(i);SERIALX.print("  ");SERIALX.println(lline[i]);
      if ( mline[i]) mline[i] =0;
       if (i >=3) z = y/2 ; else z = 0;
 			if (i == STATIONNAME) 
 			{	
         ucg.setColor(255,255,255); 	
-        ucg.drawBox(0,0,x,((x == 84)?10:13)-ucg.getFontDescent()); 	
+        ucg.drawBox(0,0,x,y); 	
         ucg.setColor(0,0,0);	
-				if (nameNum[0] ==0)  ucg.drawString(1,0,0,lline[i]+iline[i]);
+				if (nameNum[0] ==0)  ucg.drawString(1,1,0,lline[i]+iline[i]);
 				else 
 				{
-					ucg.drawString(1,0,0,nameNum);
-					ucg.drawString(ucg.getStrWidth(nameNum)-2,0,0,lline[i]+iline[i]);
+					ucg.drawString(1,1,0,nameNum);
+					ucg.drawString(ucg.getStrWidth(nameNum)-2,1,0,lline[i]+iline[i]);
 				}
 			} else
       if (i == VOLUME)
@@ -580,32 +692,32 @@ void translateIR() // takes action based on IR code received
 
 //  Uncomment the following line to see the code of your remote control and report to the case the value
 #ifdef IRLib2
-//	    SERIALX.print("Protocol:");SERIALX.print(results.protocolNum);SERIALX.print("  value:");SERIALX.println(results.value,HEX);
+//	    SERIALX.print(F("Protocol:"));SERIALX.print(results.protocolNum);SERIALX.print(F("  value:"));SERIALX.println(results.value,HEX);
 #else
-//      SERIALX.print("Protocol:");SERIALX.print(results.decode_type);SERIALX.print("  value:");SERIALX.println(results.value,HEX);
+//      SERIALX.print(F("Protocol:"));SERIALX.print(results.decode_type);SERIALX.print(F("  value:"));SERIALX.println(results.value,HEX);
 #endif
-//      SERIALX.print("  value:");SERIALX.println(results.value,HEX);
+//      SERIALX.print(F("  value:"));SERIALX.println(results.value,HEX);
 		switch(results.value)
 		{
 			case 0xFF629D: 
-			case 0x10EF48B7:	/*(" FORWARD");*/  irStr[0] = 0;SERIALX.print("cli.next\r"); break;
+			case 0x10EF48B7:	/*(" FORWARD");*/  irStr[0] = 0;SERIALX.print(F("cli.next\r")); break;
 
 			case 0xFF22DD:
 			case 0x10EFA857:
-			case 0x10EF42BD: /*(" LEFT");*/  irStr[0] = 0;SERIALX.print("cli.vol-\r");  break;
+			case 0x10EF42BD: /*(" LEFT");*/  irStr[0] = 0;SERIALX.print(F("cli.vol-\r"));  break;
 
 			case 0xFF02FD:
 			case 0x10EF7887:		/*(" -OK-");*/
 			{  
-//      state?SERIALX.print("cli.start\r"):SERIALX.print("cli.stop\r");
+//      state?SERIALX.print(F("cli.start\r")):SERIALX.print(F("cli.stop\r"));
         if (strlen(irStr) >0)
         {
-          SERIALX.print("cli.play(\"");SERIALX.print(irStr);SERIALX.print("\")\r");
+          SERIALX.print(F("cli.play(\""));SERIALX.print(irStr);SERIALX.print(F("\")\r"));
           irStr[0] = 0;
         }
         else
         { 
-          state?SERIALX.print("cli.start\r"):SERIALX.print("cli.stop\r");
+          state?SERIALX.print(F("cli.start\r")):SERIALX.print(F("cli.stop\r"));
 /*				  if (state)
            SERIALX.print("cli.start\r");
 			  	else
@@ -618,9 +730,9 @@ void translateIR() // takes action based on IR code received
 			}
 			case 0xFFC23D:
 			case 0x10EF28D7:
-			case 0x10EF827D: /*(" RIGHT");*/ irStr[0] = 0;SERIALX.print("cli.vol+\r");  break; // volume +
+			case 0x10EF827D: /*(" RIGHT");*/ irStr[0] = 0;SERIALX.print(F("cli.vol+\r"));  break; // volume +
 			case 0xFFA857:
-			case 0x10EFC837:	/*(" REVERSE");*/ irStr[0] = 0;SERIALX.print("cli.prev\r"); break;
+			case 0x10EFC837:	/*(" REVERSE");*/ irStr[0] = 0;SERIALX.print(F("cli.prev\r")); break;
 			case 0xFF6897:
 			case 0x10EF807F: /*(" 1");*/ nbStation('1');   break;
 			case 0xFF9867:
@@ -640,11 +752,11 @@ void translateIR() // takes action based on IR code received
 			case 0xFF5AA5:
 			case 0x10EF906F: /*(" 9");*/ nbStation('9');   break;
 			case 0xFF42BD:
-			case 0x10EFE817: /*(" *");*/   irStr[0] = 0;SERIALX.print("cli.stop\r"); break;
+			case 0x10EFE817: /*(" *");*/   irStr[0] = 0;SERIALX.print(F("cli.stop\r")); break;
 			case 0xFF4AB5:
 			case 0x10EF00FF: /*(" 0");*/ nbStation('0');   break;
 			case 0xFF52AD:
-			case 0x10EFB847: /*(" #");*/   irStr[0] = 0;SERIALX.print("cli.start\r"); break;
+			case 0x10EFB847: /*(" #");*/   irStr[0] = 0;SERIALX.print(F("cli.start\r")); break;
 			case 0xFFFFFFFF: /*(" REPEAT");*/break;
 			default:;
 			/*SERIALX.println(" other button   ");*/
@@ -659,26 +771,26 @@ void translateIR() // takes action based on IR code received
 } //END translateIR
 #endif
 
+// send a request  for the time to esp
+void askTime()
+{
+    if (itAskTime) // time to ntp. Don't do that in interrupt.
+    {
+        SERIALX.print(F("sys.date\r")) ; 
+        itAskTime = false;
+    }  
+}
 ////////////////////////////////////////
 void loop(void) {
-  static unsigned scrl = 0 ;
-//  SERIALX.println("Loop");
-// serial();
+/*
     drawLines();   
 #ifdef IR
-  #ifdef (__STM32F1__)
-    if (loopcount++ == ((x==84)?0x4000:0x8000)) // 
-  #else
     if (loopcount++ == ((x==84)?0x900:0x2000)) // 
-  #endif
   {
 		 translateIR();
 #else
-#if defined (__STM32F1__)
-    if (loopcount++ == ((x==84)?0x8000:0x10000)) // 
-  #else
+
     if (loopcount++ == ((x==84)?0x1000:0x3000)) // 
-  #endif  
   { 
 #endif 
   	  loopcount = 0;
@@ -689,5 +801,37 @@ void loop(void) {
       if (scrl%4 == 0)  
         digitalWrite(PIN_LED, LOW);      
     }
+    */
+#ifdef IR
+    translateIR();
+#endif
+// scrolling control and draw control
+    if (loopScroll >=1 ) // 500ms
+    { 
+      digitalWrite(PIN_LED, !digitalRead(PIN_LED)); // blink led  
+      loopScroll = 0;
+      if (askDraw) // something to display
+      {
+        askDraw = false; 
+        drawLines();   
+      }   
+//      else
+      scroll(); 
+    }
+// ntp control and first info demand
+     if (loopDate>=5)
+     {
+         loopDate = 0;
+          if (itAskTime)
+          {
+            if (!syncTime) // time to ntp. Don't do that in interrupt.
+            {
+              SERIALX.print(F("\rsys.tzo(\"")) ;SERIALX.print(TZO);SERIALX.print(F("\")\r")); 
+              SERIALX.print(F("cli.info\r")); // Synchronise the current state   
+              itAskTime = false;             
+            } 
+            else askTime();
+          }
+      }    
 }
 

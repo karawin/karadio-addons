@@ -31,14 +31,8 @@ Use Universal 8bit Graphics Library, https://github.com/olikraus/ucglib/
 //Ucglib3WireILI9325SWSPI ucg(ucg_dev_ili9325_18x240x320_itdb02, ucg_ext_ili9325_18, /*sclk=*/ 13, /*data=*/ 11, /*cs=*/ 10, /*reset=*/ 8);	// not working
 
 //Ucglib_ST7735_18x128x160_SWSPI ucg(/*sclk=*/ 13, /*data=*/ 11, /*cd=*/ 9 , /*cs=*/ 10, /*reset=*/ 8);
+Ucglib_ST7735_18x128x160_HWSPI ucg(/*cd=*/ 9 , /*cs=*/ 10, /*reset=*/ 8);
 
-#if defined(__STM32F1__)
-// STM32
-//Ucglib_ST7735_18x128x160_SWSPI ucg(/*sclk=*/ PB6, /*data=*/ PB7, /*cd=*/ PB9 , /*cs=*/ PB5, /*reset=*/ PB3);
-Ucglib_ST7735_18x128x160_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
-#else
-//Ucglib_ST7735_18x128x160_HWSPI ucg(/*cd=*/ 9 , /*cs=*/ 10, /*reset=*/ 8);
-#endif
 //Ucglib_ILI9163_18x128x128_SWSPI ucg(/*sclk=*/ 7, /*data=*/ 6, /*cd=*/ 5 , /*cs=*/ 3, /*reset=*/ 4);
 //Ucglib_ILI9163_18x128x128_HWSPI ucg(/*cd=*/ 9 , /*cs=*/ 10, /*reset=*/ 8);	/* HW SPI Adapter */
 
@@ -98,15 +92,15 @@ Raw: 5 to 16 VDC Max
 
 
 Graphic LCD Pinout:
-Micro Pro____ Mini Pro___STM32___LCD_______________
-16				    11        PA7     LCD SDA .... Pin 6
-15					  13        PA5  	  LCD SCK .... Pin 7
-10					  10        PB6  	  LCD TFT CS.. Pin 3
-9					    9         PB5	    LCD A0	.... Pin 5
-8				      8         PB4     LCD RST .... Pin 4
-										LCD Gnd .... Pin 2
-										LCD Vcc .... Pin 1  3.3 or 5 volts  from the minipro VCC
-										LCD Led .... Pin 8  To Vcc thru a resistor around 100 ohms
+Micro Pro____ Mini Pro___LCD_______________
+16				    11        LCD SDA .... Pin 6
+15					  13        LCD SCK .... Pin 7
+10					  10        LCD TFT CS.. Pin 3
+9					    9         LCD A0	.... Pin 5
+8				      8         LCD RST .... Pin 4
+										  LCD Gnd .... Pin 2
+										  LCD Vcc .... Pin 1  3.3 or 5 volts  from the minipro VCC
+										  LCD Led .... Pin 8  To Vcc thru a resistor around 100 ohms
 
 
 Cable wiring between nodeMcu and Mini Pro  and stm32
