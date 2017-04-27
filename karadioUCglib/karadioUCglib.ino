@@ -15,7 +15,7 @@
 #define TZO 1
 
 #undef SERIAL_RX_BUFFER_SIZE
-#define SERIAL_RX_BUFFER_SIZE 128
+#define SERIAL_RX_BUFFER_SIZE 256
 #include "ucglibConf.h"
 #include <EEPROM.h>
 #include <time.h>
@@ -93,9 +93,10 @@ bool state = false; // start stop on Ok ir key
    char  msg[]    = {"Karadio"};
       
 // Karadio specific data
-#define BUFLEN  180
-#define LINES	8
-char line[BUFLEN]; // receive buffer
+#define BUFLEN  160
+#define BUFREC  254
+#define LINES	7
+char line[BUFREC]; // receive buffer
 char station[BUFLEN]; //received station
 char title[BUFLEN];	// received title
 char nameset[BUFLEN/2]; // the local name of the station
@@ -103,14 +104,14 @@ char nameNum[5]; // the number of the station
 char genre[BUFLEN/2]; // the local name of the station
 
 char* lline[LINES] ; // array of ptr of n lines 
-uint8_t  iline[LINES] ; //array of Rbindex for scrolling
+uint8_t  iline[LINES] ; //array of index for scrolling
 uint8_t  tline[LINES] ; // tempo at end or begin
-uint8_t  mline[LINES] ; // mark to display
+uint8_t  mline[LINES+1] ; // mark to display
 byte volume;
-unsigned  Rbindex = 0; // receive buffer Rbindex
+volatile unsigned  Rbindex = 0; // receive buffer Rbindex
 unsigned loopScroll = 0;
 unsigned loopDate = 0;
-char oip[20];
+char oip[16];
 
 int16_t y ;		//Height between line
 int16_t yy;		//Height of screen
@@ -119,16 +120,17 @@ int16_t z ;		// an internal offset for y
 
 struct tm *dt;
 time_t timestamp = 0;
-bool syncTime = false;
-bool askDraw  = false;
-bool itAskTime = true;
-unsigned loopTime = 0;
-
+volatile bool syncTime = false;
+volatile bool askDraw  = false;
+volatile bool itAskTime = true;
+volatile unsigned loopTime = 0;
+volatile bool itSerial = false;
 ////////////////////////////////////////
 //Setup all things, check for contrast adjust and show initial page.
 // setup on esp reset
 void setup2(void)
 {
+  cli();//stop interrupts
   lline[0] = msg;
   lline[1] = msg1;
   lline[2] = msg2;
@@ -138,6 +140,7 @@ void setup2(void)
   lline[4] = oip;
   drawFrame();
   digitalWrite(PIN_PLAYING, LOW);
+  sei();//allow interrupts
 }
 
 void setTimer2()
@@ -146,12 +149,12 @@ void setTimer2()
   TCCR2A = 0;// set entire TCCR2A register to 0
   TCCR2B = 0;// same for TCCR2B
   TCNT2  = 0;//initialize counter value to 0
-  // set compare match register for 1khz increments
-  OCR2A = F_CPU/1000/64 -1;// (must be <256)
+  // set compare match register for 2khz increments
+  OCR2A = F_CPU/2500/64 -1;// (must be <256)
   // turn on CTC mode
   TCCR2A |= (1 << WGM21);
   // Set CS21 bit for 64 prescaler
-  TCCR2B |= (1 << CS22) ;   
+  TCCR2B |= (1 << CS22);//| (1 << CS21) ;   
   // enable timer compare interrupt
   TIMSK2 |= (1 << OCIE2A);
   sei();//allow interrupts
@@ -178,9 +181,13 @@ void setTimer1()
 
 ISR(TIMER2_COMPA_vect)
 {
-  cli();//stop interrupts
-  serial();
   sei();//allow interrupts
+  if (!itSerial)
+  {
+  itSerial = true;
+  serial();
+  itSerial = false;
+  }
 }
 
 ISR(TIMER1_COMPA_vect)
@@ -225,8 +232,6 @@ void setup(void) {
   TXLED1;
   RXLED1;
 #endif
-
-SERIALX.println("Setup");
 // start the graphic library  
   ucg.begin(UCG_FONT_MODE_TRANSPARENT);
   ucg.clearScreen();
@@ -236,6 +241,7 @@ SERIALX.println("Setup");
   else 
   ucg.setFont(ucg_font_6x10_tf);
   ucg.setFontPosTop();
+  ucg.setColor(1,0,0,0);
 // some constant data
   y = - ucg.getFontDescent()+ ucg.getFontAscent() +4; //interline
   yy = ucg.getHeight(); // screen height
@@ -248,7 +254,7 @@ SERIALX.println("Setup");
     if (i%2) ucg.setColor(0, 255, 0);
     else ucg.setColor(255, 255, 0);
     ucg.drawString(ucg.getWidth()/2 - (ucg.getStrWidth(msg3)/2), ucg.getHeight()/3,0, msg3);  
-    delay(500);
+    delay(400);
     if (i%2) ucg.setScale2x2(); 
     else ucg.undoScale(); 
     ucg.clearScreen();
@@ -263,7 +269,7 @@ SERIALX.println("Setup");
   lline[4] = oip;
   drawFrame();
 
-  setTimer2();
+//  setTimer2();
   setTimer1();
 }
 
@@ -281,7 +287,7 @@ void clearAll()
 void cleartitle()
 {
      title[0] = 0;
-     for (int i = 3;i<LINES-1;i++)  // clear lines
+     for (int i = 3;i<LINES;i++)  // clear lines
      {
        lline[i] = NULL;
 	     iline[i] = 0;
@@ -293,18 +299,18 @@ void cleartitle()
 ////////////////////////////////////////
 void removeUtf8(byte *characters)
 {
-  int Rbindex = 0;
-  while (characters[Rbindex])
+  int Rindex = 0;
+  while (characters[Rindex])
   {
-    if ((characters[Rbindex] >= 0xc2)&&(characters[Rbindex] <= 0xc3)) // only 0 to FF ascii char
+    if ((characters[Rindex] >= 0xc2)&&(characters[Rindex] <= 0xc3)) // only 0 to FF ascii char
     {
-      //      SERIALX.println((characters[Rbindex]));
-      characters[Rbindex+1] = ((characters[Rbindex]<<6)&0xFF) | (characters[Rbindex+1] & 0x3F);
-      int sind = Rbindex+1;
+      //      SERIALX.println((characters[Rindex]));
+      characters[Rindex+1] = ((characters[Rindex]<<6)&0xFF) | (characters[Rindex+1] & 0x3F);
+      int sind = Rindex+1;
       while (characters[sind]) { characters[sind-1] = characters[sind];sind++;}
       characters[sind-1] = 0;
     }
-    Rbindex++;
+    Rindex++;
   }
 }
 
@@ -390,58 +396,87 @@ void separator(char* from)
 // parse the karadio received line and do the job
 void parse(char* line)
 {
-  char* ici;
-//SERIALX.print("received: ");SERIALX.println(line); 
-   removeUtf8((byte*)line);
-   
- //////  reset of the esp
-   if ((ici=strstr_PF(line,PSTR("VS Version"))) != NULL) 
+  char *ici,*pline;
+  pline = line;
+
+//unsigned cwr = SERIALX.availableForWrite() ;
+//SERIALX.print("sys.log: ");SERIALX.print(pline); SERIALX.print("\r");
+//while (SERIALX.availableForWrite() != cwr) ;
+
+   removeUtf8((byte*)pline);  
+
+// ##CLI. command
+if ((ici=strstr(pline,"##CLI.")) != NULL)
+{
+   pline +=6;
+////// ICY7 audio info
+   if ((ici=strstr_PF(pline,PSTR("ICY7#: "))) != NULL)
    {
-      clearAll();
-      setup2();
-   }
-   else
- ////// Meta title   
-   if ((ici=strstr_PF(line,PSTR("META#: "))) != NULL)
-   {     
-     cleartitle(); 
-     strcpy(title,ici+7);    
-	   separator(title); 
-   } else 
-    ////// ICY4 Description
-    if ((ici=strstr_PF(line,PSTR("ICY4#: "))) != NULL)
+      digitalWrite(PIN_PLAYING, HIGH);
+      return;  
+   } else   
+////// ICY6 Description
+   if ((ici=strstr_PF(pline,PSTR("ICY6#: "))) != NULL)
+   {
+      digitalWrite(PIN_PLAYING, HIGH);
+      return;  
+   } else
+////// ICY3 icy-url
+   if ((ici=strstr_PF(pline,PSTR("ICY3#: "))) != NULL)
+   {
+      return;  
+   } else
+////// ICY1 Notice1
+   if ((ici=strstr_PF(pline,PSTR("ICY1#: "))) != NULL)
+   {
+      return;  
+   } else
+////// ICY2 Notice2
+   if ((ici=strstr_PF(pline,PSTR("ICY2#: "))) != NULL)
+   {
+       return;  
+   } else      
+////// ICY5 br
+   if ((ici=strstr_PF(pline,PSTR("ICY5#: "))) != NULL)
+   {
+       return;  
+   } else
+////// ICY4 genre
+    if ((ici=strstr_PF(pline,PSTR("ICY4#: "))) != NULL)
     {
-	    strcpy(title,ici+7);
-	    if (lline[GENRE] == NULL)lline[GENRE] = title;
-      markDraw(GENRE);  
+	    strcpy(genre,ici+7);
+	    if (lline[GENRE] == NULL)
+	    {
+	      lline[GENRE] = genre;
+        markDraw(GENRE);  
+      }
     } else 
- ////// ICY0 station name
-   if ((ici=strstr_PF(line,PSTR("ICY0#: "))) != NULL)
+////// ICY0 station name
+   if ((ici=strstr_PF(pline,PSTR("ICY0#: "))) != NULL)
    {
-//      clearAll();
 	    if (strlen(ici+7) == 0) strcpy (station,nameset);
       else strcpy(station,ici+7);
 	    separator(station);
    } else
- ////// STOPPED  
-   if ((ici=strstr_PF(line,PSTR("STOPPED"))) != NULL)
+////// Meta title   
+   if ((ici=strstr(pline,"META#: ")) != NULL)
+   {     
+      digitalWrite(PIN_PLAYING, HIGH);
+     cleartitle(); 
+     strcpy(title,ici+7);    
+     separator(title); 
+   } else 
+////// STOPPED  
+   if ((ici=strstr_PF(pline,PSTR("STOPPED"))) != NULL)
    {
        digitalWrite(PIN_PLAYING, LOW);
 	     cleartitle();
        strcpy(title,"STOPPED");
        lline[TITLE1] = title;
-       mline[TITLE1] = 1;
-   }    
- /////// Station Ip      
-   else  
-   if ((ici=strstr_PF(line,PSTR("Station Ip: "))) != NULL) 
-   {
-       eepromReadStr(EEaddrIp, oip);
-       if ( strcmp(oip,ici+12) != 0)
-         eepromWriteStr(EEaddrIp,ici+12 ); 
-   } else
- //////Nameset
-   if ((ici=strstr_PF(line,PSTR("MESET#: "))) != NULL)  
+       markDraw(TITLE1); 
+   } else   
+//////Nameset
+   if ((ici=strstr_PF(pline,PSTR("MESET#: "))) != NULL)  
    {
      clearAll();
      strcpy(nameset,ici+8);
@@ -450,10 +485,10 @@ void parse(char* line)
 	   nameNum[ici - nameset+1] = 0;
 	   strcpy(nameset,nameset+strlen(nameNum));
      lline[STATIONNAME] = nameset;
-     markDraw(STATIONNAME);          
+     markDraw(STATIONNAME);         
    } else
  //////Playing
-   if ((ici=strstr_PF(line,PSTR("YING#"))) != NULL)  
+   if ((ici=strstr(pline,"YING#")) != NULL)  
    {
 	   digitalWrite(PIN_PLAYING, HIGH);
      if (strcmp(title,"STOPPED") == 0)
@@ -463,21 +498,46 @@ void parse(char* line)
      }
    } else
  //////Volume
-   if ((ici=strstr(line,"VOL#:")) != NULL)  
+   if ((ici=strstr(pline,"VOL#:")) != NULL)  
    {
       volume = atoi(ici+6);
       markDraw(VOLUME);  
-   }else
+   } else
+////// URLSET
+   if ((ici=strstr_PF(pline,PSTR("URL"))) != NULL)
+   {
+       return;  
+   } else  
+////// PATHSET
+   if ((ici=strstr_PF(pline,PSTR("PATH"))) != NULL)
+   {
+       return;  
+   } else   
+////// PORTSET
+   if ((ici=strstr_PF(pline,PSTR("PORT"))) != NULL)
+   {
+       return;  
+   } else        
+////// OVOLSET
+   if ((ici=strstr_PF(pline,PSTR("OVOL"))) != NULL)
+   {
+       return;  
+   }  
+}   else  
+if ((ici=strstr(pline,"##SYS.")) != NULL)
+{
+// ##SYS. command
+   pline += 6;
  //////Date Time  ##SYS.DATE#: 2017-04-12T21:07:59+01:00
-   if ((ici=strstr(line,"SYS.DATE#:")) != NULL)  
+   if ((ici=strstr(pline,"DATE#: ")) != NULL)  
    {
       char lstr[30];
-      if (*(ici+11) != '2')//// invalid date. try again later
+      if (*(ici+7) != '2')//// invalid date. try again later
       {
-        askDraw = true;
-        return;
+//        askDraw = true;
+          return;
       }
-      strcpy(lstr,ici+11);
+      strcpy(lstr,ici+7);
       dt = gmtime(&timestamp);
       int year,month,day,hour,minute,second;
       sscanf(lstr,"%04d-%02d-%02dT%02d:%02d:%02d",&(year),&(month),&(day),&(hour),&(minute),&(second));
@@ -487,6 +547,23 @@ void parse(char* line)
       timestamp = mktime(dt); 
       syncTime = true;
    }
+}   else // other non tagged
+{
+ //////  reset of the esp
+   if ((ici=strstr_PF(pline,PSTR("VS Version"))) != NULL) 
+   {
+      clearAll();
+      setup2();
+      syncTime = false;
+   }  else
+ /////// Station Ip       
+   if ((ici=strstr_PF(pline,PSTR("Station Ip: "))) != NULL) 
+   {
+       eepromReadStr(EEaddrIp, oip);
+       if ( strcmp(oip,ici+12) != 0)
+         eepromWriteStr(EEaddrIp,ici+12 );   
+   } 
+}      
 }
 
 ////////////////////////////////////////
@@ -494,21 +571,45 @@ void parse(char* line)
 
 void serial()
 {
-    int temp;
-    while ((temp=SERIALX.read()) != -1)
+    byte temp;
+    while (Serial.available() > 0) 
+    {
+      temp = Serial.read();
+      if (temp == '\r')
+      {
+        line[Rbindex] = 0; // end of string
+        parse(line);
+        Rbindex = 0;
+        serial();
+//        break;
+      } else
+      if ((temp != '\n') && (temp != '\\'))
+      {
+        line[Rbindex++] = temp;  
+        if (Rbindex>=BUFREC-1) 
+        {
+//          SERIALX.println(F("overflow"));
+//          line[Rbindex] = 0;
+ //         parse(line);
+          Rbindex = 0;
+          serial();
+        }
+      }
+    }
+/*    while ((temp=SERIALX.read()) != -1)
     {
 	    switch (temp)
 	    {
         case '\\':break;
-		    case '\n' : 
-		    case '\r' : if (Rbindex == 0) break;
+		    case '\n' : break;
+		    case '\r' : 
 				line[Rbindex] = 0; // end of string
 				parse(line);
         Rbindex = 0;
 				break;
 		    default : // put the received char in line
 				line[Rbindex++] = temp;
-        if (Rbindex>BUFLEN-1) 
+        if (Rbindex>BUFREC-1) 
         {
           SERIALX.println(F("overflow"));
           line[Rbindex] = 0;
@@ -517,6 +618,7 @@ void serial()
         }       
 	    }
     }
+    */
 }
 
 // Mark the lines to draw
@@ -528,10 +630,22 @@ void markDraw(int i)
 // draw the full screen
 void drawLines()
 {
-   char strsec[10]; 
-static    char strdteold[12];
+    for (int i=0;i<LINES;i++)
+    {
+        if (mline[i]) draw(i); 
+        serial();
+    }
+    if (mline[VOLUME]) draw(VOLUME); 
+//time
+//    
+    serial();
+    drawTime();
+}
+void drawTime()
+{
+     char strsec[10]; 
+static uint16_t oldmin = 0xff;;
    char strdte[12];
-   unsigned xxx,len;
   dt=gmtime(&timestamp);
   if (x==84)
   {
@@ -543,27 +657,26 @@ static    char strdteold[12];
     sprintf(strsec,"%02d:%02d:%02d", dt->tm_hour, dt->tm_min,dt->tm_sec);
     sprintf(strdte,"%02d-%02d-%04d",dt->tm_mon,dt->tm_mday,dt->tm_year+1900);
   }
-     for (int i=0;i<LINES;i++)
-     {
-        if (mline[i]) draw(i); 
-     }
-//time
-    ucg.setColor(0,0,0,0);
-    xxx = 3*x/4-(ucg.getStrWidth(strsec)/2);
-    len = ucg.getStrWidth(strsec);
-    ucg.drawBox(xxx,yy-2*y, len ,y); 
-    ucg.setColor(200,200,255);
-    ucg.drawString(xxx,yy-2*y,0,strsec); 
-    if (strcmp(strdte,strdteold) != 0)
+     
+   if (dt->tm_min == oldmin) // only time
     {
-      xxx = x/4-(ucg.getStrWidth(strdte)/2);
-      len = ucg.getStrWidth(strdte);
+      ucg.setColor(240,240,255);
+      ucg.setFontMode(UCG_FONT_MODE_SOLID);
+//      cli();//stop interrupts
+      ucg.drawString(3*x/4-(ucg.getStrWidth(strsec)/2),yy-2*y,0,strsec); 
+//      sei(); //enable interrupts 
+      ucg.setFontMode(UCG_FONT_MODE_TRANSPARENT);
+    } else // all  date+time
+    { 
       ucg.setColor(0,0,0,0);
-      ucg.drawBox(xxx,yy-2*y, len ,y); 
-      ucg.setColor(200,200,255);
-      ucg.drawString(xxx,yy-2*y,0,strdte);
-      strcpy(strdteold,strdte);    
-    } 
+      ucg.drawBox(0,yy-2*y, x ,y); // full line
+      ucg.setColor(240,240,255);
+//      cli();//stop interrupts
+      ucg.drawString(3*x/4-(ucg.getStrWidth(strsec)/2),yy-2*y,0,strsec); 
+      ucg.drawString(x/4-(ucg.getStrWidth(strdte)/2),yy-2*y,0,strdte);
+//      sei(); //enable interrupts 
+    }
+    oldmin = dt->tm_min;
 }
 ////////////////////
 void drawFrame()
@@ -574,7 +687,10 @@ void drawFrame()
     ucg.drawGradientLine(0,(4*y) - (y/2)-5,x,0);
     ucg.setColor(0,255,255,255);  
     ucg.drawBox(0,0,x,y);  
+    ucg.setColor(1,0,0,0);  
     for (int i=0;i<LINES;i++) draw(i);
+    draw(VOLUME); 
+    drawTime();
 }
 //////////////////////////
 // set color of font per line
@@ -588,29 +704,29 @@ void setColor(int i)
           case TITLE11: ucg.setColor(255,255,0);  break;
           case TITLE2:
           case TITLE21: ucg.setColor(0,255,255); break; 
-          case VOLUME:  ucg.setColor(200,200,255); break; 
           default:ucg.setColor(100,255,100);  
         }  
 }
 ////////////////////
 // draw one line
 void draw(int i)
-{
-
+{   
 //  SERIALX.print("Draw ");SERIALX.print(i);SERIALX.print("  ");SERIALX.println(lline[i]);
-     if ( mline[i]) mline[i] =0;
       if (i >=3) z = y/2 ; else z = 0;
 			if (i == STATIONNAME) 
 			{	
         ucg.setColor(255,255,255); 	
         ucg.drawBox(0,0,x,y); 	
         ucg.setColor(0,0,0);	
-				if (nameNum[0] ==0)  ucg.drawString(1,1,0,lline[i]+iline[i]);
+				if (nameNum[0] ==0)  ucg.drawString(1,2,0,lline[i]+iline[i]);
 				else 
 				{
-					ucg.drawString(1,1,0,nameNum);
-					ucg.drawString(ucg.getStrWidth(nameNum)-2,1,0,lline[i]+iline[i]);
+//					cli();//stop interrupts
+          ucg.drawString(1,1,0,nameNum);
+					ucg.drawString(ucg.getStrWidth(nameNum)-2,2,0,lline[i]+iline[i]);
+//          sei(); //enable interrupts
 				}
+        if ( mline[i]) mline[i] =0;
 			} else
       if (i == VOLUME)
       {
@@ -622,10 +738,13 @@ void draw(int i)
 			else 
 			{
         ucg.setColor(0,0,0); 
-        ucg.drawBox(0,y*i+z,x,((x == 84)?10:13)-ucg.getFontDescent()); 
+        ucg.drawBox(0,y*i+z,x,y); 
         setColor(i);
-			  ucg.drawString(0,y*i+z,0,lline[i]+iline[i]);        
-			}
+//        cli();//stop interrupts
+			  ucg.drawString(0,y*i+z,0,lline[i]+iline[i]); 
+//        sei(); //enable interrupts 
+        if ( mline[i]) mline[i] =0;      
+			}   
 }
 
 ////////////////////////////////////////
@@ -636,13 +755,12 @@ int16_t len;
 
 	for (int i = 0;i < LINES;i++)
 	{  
-//serial();
 	   if (tline[i]>0) 
 	   {
-	     if (tline[i] == 6) 
+	     if (tline[i] == 3) 
 	     {
 	      iline[i]= 0;
-	      if (ucg.getStrWidth(lline[i]) > x)draw(i);
+	      if (ucg.getStrWidth(lline[i]) > x) markDraw(i);//draw(i);
 	     }
 	     tline[i]--;		 
 	   } 
@@ -658,10 +776,10 @@ int16_t len;
         len = iline[i];
         while ((*(lline[i]+iline[i])!=' ')&&(*(lline[i]+iline[i])!='-')&&(iline[i]!= 0))iline[i]--;
         if (iline[i]==0) iline[i]=len;     
-		    draw(i);
+		    markDraw(i); //draw(i);
       }
 		   else 
-			  {tline[i] = 8;}
+			  {tline[i] = 4;}
 	   }
 	}
 }
@@ -782,41 +900,26 @@ void askTime()
 }
 ////////////////////////////////////////
 void loop(void) {
-/*
-    drawLines();   
-#ifdef IR
-    if (loopcount++ == ((x==84)?0x900:0x2000)) // 
-  {
-		 translateIR();
-#else
-
-    if (loopcount++ == ((x==84)?0x1000:0x3000)) // 
-  { 
-#endif 
-  	  loopcount = 0;
-      scrl++;
-  		if (scrl%2 == 0) 
-  		  digitalWrite(PIN_LED, HIGH);	
-  		scroll();	     
-      if (scrl%4 == 0)  
-        digitalWrite(PIN_LED, LOW);      
-    }
-    */
 #ifdef IR
     translateIR();
 #endif
+
+serial();
+
 // scrolling control and draw control
-    if (loopScroll >=1 ) // 500ms
+//    if (loopScroll >=2 ) // 500ms
     { 
-      digitalWrite(PIN_LED, !digitalRead(PIN_LED)); // blink led  
-      loopScroll = 0;
       if (askDraw) // something to display
       {
-        askDraw = false; 
         drawLines();   
-      }   
-//      else
-      scroll(); 
+        askDraw = false; 
+      } 
+      if (loopScroll >=2 ) // 500ms
+      {   
+        digitalWrite(PIN_LED, !digitalRead(PIN_LED)); // blink led  
+        scroll();
+        loopScroll = 0;
+      } 
     }
 // ntp control and first info demand
      if (loopDate>=5)
