@@ -953,10 +953,11 @@ void translateENC()
 void drawTTitle(char* ttitle)
 {
         ucg.setFont(ucg_font_helvB18_tf); 
+        uint16_t xxx = (x/2)-(ucg.getStrWidth(ttitle)/2);
         ucg.setColor(0,60,60,60);  
         ucg.drawBox(0,0,x,41); 
         ucg.setColor(0,200,200,255);  
-        ucg.drawString((x/2)-(ucg.getStrWidth(ttitle)/2),10,0,ttitle);   
+        ucg.drawString(xxx,10,0,ttitle);   
 }
 #ifdef IR
 ////////////////////
@@ -968,12 +969,14 @@ void drawNumber()
       case 1:     
         drawTTitle(ststr);   
       // no break
-      case 2:   
+      case 2:  
+        uint16_t xxx ;
+        xxx = (x/2)-(ucg.getStrWidth(irStr)/2); 
         ucg.setColor(0,0,0,0);  
         ucg.drawBox(0,40,x,yy);     
         ucg.setFont(ucg_font_inr38_tf); 
         ucg.setColor(0,20,255,20);  
-        ucg.drawString((x/2)-(ucg.getStrWidth(irStr)/2),60,0, irStr);
+        ucg.drawString(xxx,60,0, irStr);
         break;
       default:; 
     } 
@@ -1009,7 +1012,7 @@ void drawStation()
               playable = false; 
           else 
               playable = true;             
-              strcpy (futurNum,sline+1); 
+          strcpy (futurNum,sline+1); 
           ucg.drawString((x/2)-(ucg.getStrWidth(sline+1)/2),55,0, sline+1);
           len = (x/2)-(ucg.getStrWidth(ddot)/2);
           if (len <0) len = 0;
@@ -1031,11 +1034,13 @@ void drawVolume()
       // no break
       case 2:
         ucg.setColor(0,0,0,0);  
-        ucg.drawBox(0,40,x,yy);     
 //        ucg.setFont(ucg_font_inr49_tf);
         ucg.setFont(ucg_font_inr38_mf);  
+        uint16_t xxx;
+        xxx = (x/2)-(ucg.getStrWidth(aVolume)/2);
+        ucg.drawBox(0,40,x,yy);     
         ucg.setColor(0,20,255,20);  
-        ucg.drawString((x/2)-(ucg.getStrWidth(aVolume)/2),60,0,aVolume); ;
+        ucg.drawString(xxx,60,0,aVolume); 
         break;
       default:; 
     }
@@ -1053,10 +1058,13 @@ void drawSecond()
   sprintf(strsec,":%02d",dt->tm_sec);
   ucg.setFont(ucg_font_6x13_mf);
   len = ucg.getStrWidth(strsec);
-  ucg.setColor(0,0,0,0);  
-  ucg.drawBox(x-len-8,yy-18,x,yy);  
-  ucg.setColor(0,dt->tm_sec*5,255,dt->tm_sec*5);  
+//  ucg.setColor(0,0,0,0);  
+//  ucg.drawBox(x-len-8,yy-18,x,yy);  
+  ucg.setColor(0,dt->tm_sec*5,255,dt->tm_sec*5);
+  ucg.setColor(1,0,0,0); 
+  ucg.setFontMode(UCG_FONT_MODE_SOLID); 
   ucg.drawString(x-len-8,yy-18,0,strsec); 
+  ucg.setFontMode(UCG_FONT_MODE_TRANSPARENT);
   insec = timein; //to avoid redisplay
   }    
 }
@@ -1073,12 +1081,12 @@ void drawTime()
         sprintf(strtime,"%02d:%02d", dt->tm_hour, dt->tm_min);
         drawTTitle(strdate);
         ucg.setColor(0,0,0,0); 
+        ucg.setFont(ucg_font_inr38_mf); 
          
         if ( mTscreen ==1)
           ucg.drawBox(0,40,x,yy); 
         else
           ucg.drawBox(0,55,x,40+ucg.getFontDescent()+ucg.getFontAscent());     
-        ucg.setFont(ucg_font_inr38_mf); 
         //ucg.setFont(ucg_font_helvB18_hf);  
         ucg.setColor(0,100,255,100);  
         ucg.drawString((x/2)-(ucg.getStrWidth(strtime)/2),55,0,strtime); 
@@ -1157,14 +1165,20 @@ void draw(int i)
         case TIME:
           char strsec[13]; 
           dt=gmtime(&timestamp);
-          uint16_t len;
+          uint16_t len,xpos,xxpos,yyy;
           sprintf(strsec,"%02d:%02d:%02d",dt->tm_hour, dt->tm_min,dt->tm_sec);
           ucg.setFont(ucg_font_6x13_mf);
           len = ucg.getStrWidth(strsec);
-          ucg.setColor(0,0,0,0);  
-          ucg.drawBox((3*x/4)-(len/2),yy-12,(3*x/4)-(len/2)+len,yy);  
-          ucg.setColor(0,250,250,255);  
-          ucg.drawString((3*x/4)-(len/2),yy-12,0,strsec); 
+          xpos = (3*x/4)-(len/2);
+          xxpos = xpos+len;
+          yyy = yy -12;
+//          ucg.setColor(0,0,0,0);  
+//          ucg.drawBox(xpos,yyy,xxpos,yy);  
+          ucg.setColor(250,250,255); 
+          ucg.setColor(1,0,0,0); 
+          ucg.setFontMode(UCG_FONT_MODE_SOLID);
+          ucg.drawString(xpos,yyy,0,strsec); 
+          ucg.setFontMode(UCG_FONT_MODE_TRANSPARENT);
         break;
         default:
           ucg.setColor(0,0,0); 
