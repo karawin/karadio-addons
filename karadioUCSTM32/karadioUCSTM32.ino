@@ -168,15 +168,16 @@ void TIM2_IRQHandler()     // Timer2 Interrupt Handler
          ledcount = 0;// 
          digitalWrite(PIN_LED, !digitalRead(PIN_LED));  
          // Time compute
-         timestamp++;  // time update            
+         timestamp++;  // time update  
          if (state) timein = 0; // only on stop state
          else timein++;
-         dt=gmtime(&timestamp);
+//         dt=gmtime(&timestamp);
          if (((timein % DTIDLE)==0)&&(!state)  ) {
             if ((timein % (30*DTIDLE))==0){ itAskTime=true;timein = 0;} // synchronise with ntp every x*DTIDLE
-            if (stateScreen != stime) {itAskTime=true;itAskStime=true;} // start the time display
+            if (stateScreen != stime) {itAskStime=true;} // start the time display
           } 
-          if (((dt->tm_sec)==0)&&(stateScreen == stime)) { mTscreen = 1; }
+//          if (((dt->tm_sec)==0)&&(stateScreen == stime)) { mTscreen = 1; }
+          if (((timestamp%60)==0)&&(stateScreen == stime)) { mTscreen = 1; }
           if (stateScreen == smain) { markDraw(TIME); }
           if (!syncTime) itAskTime=true; // first synchro if not done
 // Other slow timers        
@@ -600,7 +601,9 @@ Serial.println(line);
       sscanf(lstr,"%d-%d-%dT%d:%d:%d",&dtl.tm_year,&dtl.tm_mon,&dtl.tm_mday,&dtl.tm_hour,&dtl.tm_min,&dtl.tm_sec);
       dtl.tm_year -= 1900;
 //      timein = dtl.tm_sec; //
-      timestamp = mktime(&dtl); 
+      taskDISABLE_INTERRUPTS();
+      timestamp = mktime(&dtl);
+      taskENABLE_INTERRUPTS(); 
       syncTime = true;     
    }
 }
