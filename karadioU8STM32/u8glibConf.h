@@ -52,17 +52,17 @@ Version 1.0  first release
 */
 
 
-/**** Instruction for 1.8" Serial 128X160 SPI TFT LCD Module Display + t *************************
+/**** Instruction for 128X64 OLED LCD LED Display Module white For Arduino 0.96" I2C IIC SPI Serial *************************
  *    + IR + Rotary encoder
      ----------------------------------------------------------------------------------------------
 NOTES:
 Confirmed vendor:
 lcd:
-https://www.aliexpress.com/item/J34-A96-Free-Shipping-1-8-Serial-128X160-SPI-TFT-LCD-Module-Display-PCB-Adapter-Power/32599685873.html?spm=2114.13010608.0.0.MvX4RI
-https://www.aliexpress.com/item/1-8-inch-1-8-TFT-LCD-Display-module-ST7735S-128x160-51-AVR-STM32-ARM-8/32769506973.html?spm=2114.13010608.0.0.Dm20du
+https://www.aliexpress.com/item/Free-shipping-1Pcs-128X64-OLED-LCD-LED-Display-Module-white-For-Arduino-0-96-I2C-IIC/32671702306.html?spm=2114.13010608.0.0.9K7DWb
 
 STM32:
 https://www.aliexpress.com/item/1pcs-STM32F103C8T6-ARM-STM32-Minimum-System-Development-Board-Module-For-arduino/32720697607.html?spm=2114.13010608.0.0.Dm20du
+https://www.aliexpress.com/item/1pcs-STM32F103C8T6-ARM-STM32-Minimum-System-Development-Board-Module-For-arduino/32720697607.html?spm=2114.13010608.0.0.9K7DWb
 
 Rotary Encoder Module KY-040:
 https://www.aliexpress.com/item/5pcs-lot-Rotary-Encoder-Module-Free-Shipping-Dropshipping-KY-040-for-Arduino/32218652643.html?spm=2114.13010608.0.0.Dm20du
@@ -78,10 +78,10 @@ See http://karadio.karawin.fr/images/KaradioUCSTM32l.jpg
 Cable wiring between Graphic LCD and STM32:
 -------------------------------------------
 ___STM32___LCD_______________
-  PB11     LCD SDA .... PIN 4
-  PB10     LCD SCK .... Pin 3
-  Gnd      LCD Gnd .... Pin 1
-  3.3      LCD Vcc .... Pin 2  
+  PB6      LCD SDA .... PIN 4
+  PB7      LCD SCK .... Pin 3
+  Gnd      LCD Gnd .... Pin 1 or 2 (see the board)
+  3.3      LCD Vcc .... Pin 2 or 1 (for your model) 
 
 
 Cable wiring between nodeMcu and stm32
@@ -103,9 +103,9 @@ to STM32:
 Cable wiring between STM32 and KY040:
 -------------------------------------
 --KY040--   --STM32--
-  A         PB7
-  B         PB8
-  Switch    PB9
+  A         PB12
+  B         PB13
+  Switch    PB14
   Vcc
   Gnd
 
@@ -119,7 +119,7 @@ Instruction to load the bootloader on stm32 (one time)
 http://www.stm32duino.com/viewtopic.php?f=32&t=413
 
 Libraries needed:
-ucglib for stm32 must be installed in  arduino IDE library;
+u8glib for stm32 must be installed in  arduino IDE library;
 https://github.com/karawin/U8glib_Arduino
 
 IRMP library for stm32Duino:
@@ -129,12 +129,22 @@ See https://www.mikrocontroller.net/articles/IRMP_-_english
 KY040 library:
 https://github.com/karawin/encoder
 
+IMPORTANT:
+In C:\Users\jp\Documents\Arduino\hardware\Arduino_STM32\STM32F1\libraries\Wire
+In wirebase.h change
+In line 47
+#define WIRE_BUFSIZ 32
+to
+#define WIRE_BUFSIZ 256  
+
+
+
 --------
 WARNING:
 The webradio serial must be set at 115200 bauds
 --------
 
-In karadioUCSTM32.ino:
+In karadioU8STM32.ino:
 //  Uncomment the following line to see the code of your remote control and report to the case the value
 //    Serial.println(irmp_protocol_names[irmp_data.protocol]);
 //    Serial.println(irmp_data.address,HEX);
