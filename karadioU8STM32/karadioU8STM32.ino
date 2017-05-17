@@ -536,6 +536,7 @@ void parse(char* line)
       ici = strstr(nameset," ");
      if (ici != NULL)
      {
+       clearAll();
        strncpy(nameNum,nameset,ici-nameset+1);
        nameNum[ici - nameset+1] = 0; 
        strcpy (futurNum,nameNum);     
@@ -899,7 +900,7 @@ void translateENC()
   
   if (newValue != 0) 
   {
-    Serial.print("Encoder: ");Serial.println(newValue);
+//    Serial.print("Encoder: ");Serial.println(newValue);
     // reset our accelerator
     if ((newValue >0)&&(oldValue<0)) oldValue = 0;
     if ((newValue <0)&&(oldValue>0)) oldValue = 0;
@@ -921,8 +922,8 @@ void translateENC()
 
   if ((stateScreen  != sstation)&&(newValue != 0))
   {    
-    Serial.print("Value: ");Serial.println(newValue);
-    Serial.print("Volume: ");Serial.println(volume+newValue+(oldValue*2));
+//    Serial.print("Value: ");Serial.println(newValue);
+//    Serial.print("Volume: ");Serial.println(volume+newValue+(oldValue*2));
     setVol(volume+newValue+(oldValue*3));
   } 
   if ((stateScreen  == sstation)&&(newValue != 0))
