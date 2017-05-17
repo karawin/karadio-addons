@@ -117,6 +117,7 @@ Bootloader (see http://wiki.stm32duino.com/index.php?title=Bootloader)
 https://github.com/rogerclarkmelbourne/STM32duino-bootloader (the one we need is generic_boot20_pc13.bin)
 Instruction to load the bootloader on stm32 (one time)
 http://www.stm32duino.com/viewtopic.php?f=32&t=413
+http://wiki.stm32duino.com/index.php?title=Uploading_a_sketch
 
 Libraries needed:
 u8glib for stm32 must be installed in  arduino IDE library;
