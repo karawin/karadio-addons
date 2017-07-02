@@ -78,8 +78,8 @@ See http://karadio.karawin.fr/images/KaradioUCSTM32l.jpg
 Cable wiring between Graphic LCD and STM32:
 -------------------------------------------
 ___STM32___LCD_______________
-  PB6      LCD SDA .... PIN 4
-  PB7      LCD SCK .... Pin 3
+  PB7      LCD SDA .... PIN 4
+  PB6      LCD SCK .... Pin 3
   Gnd      LCD Gnd .... Pin 1 or 2 (see the board)
   3.3      LCD Vcc .... Pin 2 or 1 (for your model) 
 
@@ -90,7 +90,7 @@ Cable wiring between nodeMcu and stm32
   Tx            Rx   PA10
   Rx            Tx   PA9
   Gnd           Gnd
-  VU            VB
+  VU or 5V      5V
 
 Cable wiring between STM32 and IR:
 ----------------------------------
