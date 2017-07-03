@@ -33,6 +33,14 @@
 #define SERIALX Serial1
 #define PIN_LED LED_BUILTIN
 #define PIN_PLAYING PB10
+//uncomment REVERSE if you need to invert the play led
+#define REVERSE !
+
+// Optional input switchs (to gnd)
+#define SWITCH1 PA0
+#define SWITCH2 PA1
+#define SWITCH3 PA2
+
 #define  BAUD       115200   // any standard serial value: 300 - 115200
 
 // nams <--> num of line
@@ -138,6 +146,12 @@ uint16_t z ;		// an internal offset for y
 
 byte NOKIAcontrast;                 // LCD initialization contrast values B0 thru BF
 time_t timestamp = 0;
+
+// switches state
+bool Switch1 = false;
+bool Switch2 = false;
+bool Switch3 = false;
+
 
 U8GLIB_SSD1306_128X64 u8g;
 //uint8_t u8g_com_hw_i2c_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void *arg_ptr);
@@ -250,6 +264,7 @@ static void uartTask(void *pvParameters) {
   vTaskDelay(1);
   while (1){
     serial(); 
+    recSwitch(); // read the switches
     vTaskDelay(1);
   }
 }
@@ -291,7 +306,7 @@ void setup2(bool ini)
   lline[3] = (char*)"IP:";
   lline[4] = oip;
   drawFrame();
-  digitalWrite(PIN_PLAYING, LOW);
+  digitalWrite(PIN_PLAYING, REVERSE LOW);
   if (ini) lline[STATIONNAME] = nameset;
 }
 
@@ -323,7 +338,12 @@ encoder = new ClickEncoder(PB12, PB13, PB14);
 #endif
    pinMode(PIN_LED, OUTPUT);
 	 pinMode(PIN_PLAYING, OUTPUT);
-	 digitalWrite(PIN_PLAYING, LOW); 
+	 digitalWrite(PIN_PLAYING,REVERSE LOW); 
+
+   pinMode(SWITCH1, INPUT_PULLUP);
+   pinMode(SWITCH2, INPUT_PULLUP);
+   pinMode(SWITCH3, INPUT_PULLUP);
+   
 ReStart:  // Come back here if LCD contract is changed
     // Read the EEPROM to determine if display is using a custom contrast value
   NOKIAcontrast = EEPROM.read(EEaddr1);
@@ -364,7 +384,7 @@ delay(3000);
 	drawFrame();
   delay(2000);
   s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 310, NULL, tskIDLE_PRIORITY + 1, NULL);
-  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +200, NULL, tskIDLE_PRIORITY + 2, NULL);
+  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +250, NULL, tskIDLE_PRIORITY + 2, NULL);
 #ifdef IR  
   s3=xTaskCreate(irTask, NULL, configMINIMAL_STACK_SIZE +120, NULL, tskIDLE_PRIORITY + 1, NULL);
 #else
@@ -514,7 +534,7 @@ void parse(char* line)
  ////// STOPPED  ##CLI.STOPPED#  
    if ((ici=strstr_P(line,PSTR("STOPPED"))) != NULL)
    {
-      digitalWrite(PIN_PLAYING, LOW);
+      digitalWrite(PIN_PLAYING, REVERSE LOW);
       state = false;
       cleartitle();
       strcpy_P(title,PSTR("STOPPED"));
@@ -548,7 +568,7 @@ void parse(char* line)
  //////Playing    ##CLI.PLAYING#
    if ((ici=strstr_P(line,PSTR("YING#"))) != NULL)  
    {
-      digitalWrite(PIN_PLAYING, HIGH);
+      digitalWrite(PIN_PLAYING, REVERSE HIGH);
       state = true;
       if (stateScreen == stime) Screen(smain0);      
       if (strcmp_P(title,PSTR("STOPPED")) == 0)
@@ -603,7 +623,34 @@ void parse(char* line)
    }
 }
 
+////////////////////////////////////////
+// Receive the switches
+void recSwitch()
+{
+  bool val;
+  val =  digitalRead(SWITCH1);
 
+  if (val != Switch1)
+  {
+    Switch1 = val;
+    if (!val) // do the action
+      startStop();
+  }
+  val =  digitalRead(SWITCH2);
+  if (val != Switch2)
+  {
+    Switch2 = val;
+    if (!val) // do the action
+      stationPlus();
+  }
+  val =  digitalRead(SWITCH3);
+  if (val != Switch3)
+  {
+    Switch3 = val;
+    if (!val) // do the action
+      stationMinus();
+  }    
+}
 ////////////////////////////////////////
 // receive the esp8266 stream
 void serial() 
