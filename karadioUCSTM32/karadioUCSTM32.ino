@@ -245,28 +245,22 @@ static void uartTask(void *pvParameters) {
   }
 }
 
-#ifdef IR
+
 //-------------------------------------------------------
-// IR task: receive the IR remote control and parse it.
-static void irTask(void *pvParameters) {
+// IR task: receive the IR and encoder  control and parse it.
+static void ioTask(void *pvParameters) {
 //  Serial.println(F("irTask"));
   while (1){
+#ifdef IR  
     translateIR() ;
-    vTaskDelay(200);
-  }
-}
 #endif 
-#ifdef RENC
-//-------------------------------------------------------
-// RENC task: receive the IR remote control and parse it.
-static void rencTask(void *pvParameters) {
-//  Serial.println(F("rencTask"));
-  while (1){
-    translateENC();
+#ifdef RENC	
+	translateENC();
+#endif  	
     vTaskDelay(200);
   }
 }
-#endif  
+
 ////////////////////////////////////////
 // setup on esp reset
 void setup2(bool ini)
@@ -287,7 +281,7 @@ void setup2(bool ini)
 //Setup all things, check for contrast adjust and show initial page.
 void setup(void) {
    char  msg3[] = {"Karadio"};
-   portBASE_TYPE s1, s2, s3,s4;
+   portBASE_TYPE s1, s2, s3;
   pinMode(PIN_LED, OUTPUT);
   pinMode(PIN_PLAYING, OUTPUT);
   digitalWrite(PIN_PLAYING, LOW);
@@ -330,18 +324,11 @@ Serial.println(F("Setup"));
   
   drawFrame(); 
   s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 210, NULL, tskIDLE_PRIORITY + 1, NULL);
-  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +120, NULL, tskIDLE_PRIORITY + 2, NULL);
-#ifdef IR  
-  s3=xTaskCreate(irTask, NULL, configMINIMAL_STACK_SIZE +120, NULL, tskIDLE_PRIORITY + 1, NULL);
-#else
-  s3 = pdPASS;
-#endif 
-#ifdef RENC  
-  s4=xTaskCreate(rencTask, NULL, configMINIMAL_STACK_SIZE +120, NULL, tskIDLE_PRIORITY + 1, NULL);
-#else
-  s4 = pdPASS;
-#endif  
-  if ( s1 != pdPASS || s2 != pdPASS || s3 != pdPASS || s4 != pdPASS) {
+  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +210, NULL, tskIDLE_PRIORITY + 2, NULL);
+  s3=xTaskCreate(ioTask, NULL, configMINIMAL_STACK_SIZE +210, NULL, tskIDLE_PRIORITY + 1, NULL);
+
+
+  if ( s1 != pdPASS || s2 != pdPASS || s3 != pdPASS ) {
     Serial.println(F("Task or Semaphore creation problem.."));
     while(1);
   }

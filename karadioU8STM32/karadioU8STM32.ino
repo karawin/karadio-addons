@@ -269,29 +269,21 @@ static void uartTask(void *pvParameters) {
   }
 }
 
-#ifdef IR
-//-------------------------------------------------------
-// IR task: receive the IR remote control and parse it.
-static void irTask(void *pvParameters) {
-//  Serial.println(F("irTask"));
-  while (1){
-    translateIR() ;
-    vTaskDelay(200);
-  }
-}
-#endif 
-#ifdef RENC
-//-------------------------------------------------------
-// RENC task: receive the IR remote control and parse it.
-static void rencTask(void *pvParameters) {
-//  Serial.println(F("rencTask"));
-  while (1){
-    translateENC();
-    vTaskDelay(200);
-  }
-}
-#endif  
 
+//-------------------------------------------------------
+// IO task: receive the IR remote and encoder control and parse it.
+static void ioTask(void *pvParameters) {
+//  Serial.println(F("ioTask"));
+  while (1){
+#ifdef IR    
+    translateIR() ;
+#endif     
+#ifdef RENC
+    translateENC();
+#endif      
+    vTaskDelay(200);
+  }
+}
 
 ////////////////////////////////////////
 //Setup all things, check for contrast adjust and show initial page.
@@ -318,7 +310,7 @@ void setFont(const u8g_fntpgm_uint8_t *font)
 }
 
 void setup(void) {
-   portBASE_TYPE s1, s2, s3,s4;
+   portBASE_TYPE s1, s2, s3;
 //uint8_t u8g_com_hw_i2c_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void *arg_ptr);
 //U8GLIB_SSD1306_128X64 u8g((u8g_com_fnptr)u8g_com_hw_i2c_fn);
   SERIALX.begin(BAUD);
@@ -351,7 +343,7 @@ ReStart:  // Come back here if LCD contract is changed
   if (NOKIAcontrast  < 0xB0 || NOKIAcontrast > 0xCF) NOKIAcontrast = 0xB8;
 	u8g.setContrast(2*(NOKIAcontrast-0x80));
   
-  Serial.print("Width: "); Serial.println(u8g.getWidth());
+  Serial.print(F("Width: ")); Serial.println(u8g.getWidth());
   
 //  u8g.setFontRefHeightExtendedText();
 //  u8g.setDefaultForegroundColor();
@@ -382,20 +374,12 @@ delay(3000);
 	lline[4] = oip;
 	lline[2] = (char*)msg2;
 	drawFrame();
-  delay(2000);
+  delay(1000);
   s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 310, NULL, tskIDLE_PRIORITY + 1, NULL);
-  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +250, NULL, tskIDLE_PRIORITY + 2, NULL);
-#ifdef IR  
-  s3=xTaskCreate(irTask, NULL, configMINIMAL_STACK_SIZE +120, NULL, tskIDLE_PRIORITY + 1, NULL);
-#else
-  s3 = pdPASS;
-#endif 
-#ifdef RENC  
-  s4=xTaskCreate(rencTask, NULL, configMINIMAL_STACK_SIZE +120, NULL, tskIDLE_PRIORITY + 2, NULL);
-#else
-  s4 = pdPASS;
-#endif  
-  if ( s1 != pdPASS || s2 != pdPASS || s3 != pdPASS || s4 != pdPASS) {
+  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +250, NULL, tskIDLE_PRIORITY + 2, NULL);  
+  s3=xTaskCreate(ioTask, NULL, configMINIMAL_STACK_SIZE +210, NULL, tskIDLE_PRIORITY + 1, NULL);
+ 
+  if ( s1 != pdPASS || s2 != pdPASS || s3 != pdPASS ) {
     Serial.println(F("Task or Semaphore creation problem.."));
     while(1);
   }
