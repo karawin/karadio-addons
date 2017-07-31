@@ -696,7 +696,8 @@ void loop(void) {
           {
             if (!syncTime) // time to ntp. Don't do that in interrupt.
             {
-              Serial.print(F("\rsys.tzo(\"")) ;Serial.print(TZO);Serial.print(F("\")\r")); 
+              Serial.print(F("\rsys.tzo(\"")) ;Serial.print(TZO);
+              Serial.print(F("\")\r")); 
               Serial.print(F("cli.info\r")); // Synchronise the current state   
               itAskTime = false;             
             } 

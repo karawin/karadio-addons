@@ -153,9 +153,10 @@ bool Switch2 = false;
 bool Switch3 = false;
 
 
-U8GLIB_SSD1306_128X64 u8g;
-//uint8_t u8g_com_hw_i2c_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void *arg_ptr);
-//U8GLIB_SSD1306_128X64 u8g((u8g_com_fnptr)u8g_com_hw_i2c_fn);
+//U8GLIB_SSD1306_128X64 u8g;
+//U8GLIB_SH1106_128X64_2X u8g;
+U8GLIB_SH1106_128X64 u8g;
+
 
 
 // init timer 2 for irmp led screen etc
@@ -281,7 +282,7 @@ static void ioTask(void *pvParameters) {
 #ifdef RENC
     translateENC();
 #endif      
-    vTaskDelay(200);
+    vTaskDelay(100);
   }
 }
 

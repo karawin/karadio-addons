@@ -52,9 +52,9 @@ const int  EEaddr1         = 2;     // EEPROM address for LCD address
 const int  EEaddrIp        = 10;    // EEPROM address for the IP
 
 #ifdef IR
-const char  msg[]  PROGMEM    = {"Karadio IR+clcd V1.1"}; //
+const char  msg[]  PROGMEM    = {"Karadio IR+clcd V1.2"}; //
 #else
-const char  msg[] PROGMEM     = {"Karadio clcd V1.1"}; //
+const char  msg[] PROGMEM     = {"Karadio clcd V1.2"}; //
 #endif
 const char  msg1[] PROGMEM   = {"(c) KaraWin"}; //
 const char  msg2[] PROGMEM   = {"https://hackaday.io/project/11570-wifi-webradio-with-esp8266-and-vs1053"};
@@ -257,7 +257,7 @@ static void ioTask(void *pvParameters) {
 #ifdef RENC	
 	translateENC();
 #endif  	
-    vTaskDelay(200);
+    vTaskDelay(100);
   }
 }
 
