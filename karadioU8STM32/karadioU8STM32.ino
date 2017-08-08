@@ -3,16 +3,22 @@
   KaradioU8STM32.pde
   Only for STM32 CPU  
 */
-
+//-------------------------------------------------------
+// Please define your options here
 //-------------------------------------------------------
 // UnComment the following line if you want the IR remote
 #define IR
 // UnComment the following lines if you want the rotary encoder
 #define RENC
-//-------------------------------------------------------
+// Uncomment your oled type
+#define oled0.96 U8GLIB_SSD1306_128X64
+//#define oled1.30 U8GLIB_SH1106_128X64
 
 // your timezone offset
-#define TZO 1
+#define TZO 1  // comment if the tzo is already given in the esp8266 or change the value
+//-------------------------------------------------------
+
+
 #undef SERIAL_RX_BUFFER_SIZE
 #define SERIAL_RX_BUFFER_SIZE 256
 #include <arduino.h>
@@ -153,9 +159,14 @@ bool Switch2 = false;
 bool Switch3 = false;
 
 
+//U8GLIB_SSD1306_128X64 u8g;
+#ifdef oled0.96
 U8GLIB_SSD1306_128X64 u8g;
-//U8GLIB_SH1106_128X64_2X u8g;
-//U8GLIB_SH1106_128X64 u8g;
+#else
+#ifdef oled1.30
+U8GLIB_SH1106_128X64 u8g;
+#endif
+#endif
 
 
 
@@ -258,7 +269,9 @@ static void uartTask(void *pvParameters) {
   vTaskDelay(200);
   SERIALX.print(F("\r")); // cleaner
   SERIALX.print(F("\r")); // cleaner
+  #ifdef TZO
   setTzo();
+  #endif
   vTaskDelay(1);
   SERIALX.print(F("cli.info\r")); // Synchronise the current state
   itAskTime = true;
@@ -320,7 +333,13 @@ delay(2000);
 Serial.println("ready");
 
 uint8_t u8g_com_hw_i2c_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void *arg_ptr);
+#ifdef oled0.96
 U8GLIB_SSD1306_128X64 u8g((u8g_com_fnptr)u8g_com_hw_i2c_fn,U8G_I2C_OPT_NONE);
+#else
+#ifdef oled1.30
+U8GLIB_SH1106_128X64 u8g((u8g_com_fnptr)u8g_com_hw_i2c_fn,U8G_I2C_OPT_NONE);
+#endif
+#endif
 
 #ifdef IR
     irmp_init();   // initialize irmp
