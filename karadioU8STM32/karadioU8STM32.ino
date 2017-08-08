@@ -153,9 +153,9 @@ bool Switch2 = false;
 bool Switch3 = false;
 
 
-//U8GLIB_SSD1306_128X64 u8g;
+U8GLIB_SSD1306_128X64 u8g;
 //U8GLIB_SH1106_128X64_2X u8g;
-U8GLIB_SH1106_128X64 u8g;
+//U8GLIB_SH1106_128X64 u8g;
 
 
 
@@ -214,7 +214,7 @@ void TIM2_IRQHandler()     // Timer2 Interrupt Handler
 //-------------------------------------------------------
 // Main task used for display the screen and blink the led
 static void mainTask(void *pvParameters) {
-//Serial.println(F("mainTask"));
+Serial.println(F("mainTask"));
   while (1) {
     drawScreen();   
     if (itAskTime) // time to ntp. Don't do that in interrupt.
@@ -361,11 +361,13 @@ ReStart:  // Come back here if LCD contract is changed
 	clearAll();
  
 //LOGO
+Serial.println(F("Logo in\n"));
     u8g.firstPage();
     do {
       u8g.drawXBMP( x/2-logo_width/2, yy/2-logo_height/2, logo_width, logo_height, logo_bits);
     } while( u8g.nextPage() );
 delay(3000);
+Serial.println(F("Logo done\n"));
 	lline[0] = (char*)msg;
 	lline[1] = (char*)msg1;
 	//	lline[2] =(char*) msg2;
@@ -376,9 +378,9 @@ delay(3000);
 	lline[2] = (char*)msg2;
 	drawFrame();
   delay(1000);
-  s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 310, NULL, tskIDLE_PRIORITY + 1, NULL);
-  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +250, NULL, tskIDLE_PRIORITY + 2, NULL);  
-  s3=xTaskCreate(ioTask, NULL, configMINIMAL_STACK_SIZE +210, NULL, tskIDLE_PRIORITY + 1, NULL);
+  s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 330, NULL, tskIDLE_PRIORITY + 1, NULL);
+  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +260, NULL, tskIDLE_PRIORITY + 2, NULL);  
+  s3=xTaskCreate(ioTask, NULL, configMINIMAL_STACK_SIZE +220, NULL, tskIDLE_PRIORITY + 1, NULL);
  
   if ( s1 != pdPASS || s2 != pdPASS || s3 != pdPASS ) {
     Serial.println(F("Task or Semaphore creation problem.."));
