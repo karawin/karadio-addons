@@ -193,14 +193,14 @@ void TIM2_IRQHandler()     // Timer2 Interrupt Handler
       (void) irmp_ISR(); // call irmp ISR
 #endif      
 #ifdef RENC
-     if (++timerEncoder == (F_INTERRUPTS/1000)) //1msec = 1000 Hz
+     if (++timerEncoder >= (F_INTERRUPTS/1000)) //1msec = 1000 Hz
      {
         timerEncoder = 0;
         encoder->service(); //call encoder engine
      }
 #endif 
-// one second tempo: led blink, date/time and scrren and scroll 
-      if ( ++ledcount == (F_INTERRUPTS)) //1 sec
+// one second tempo: led blink, date/time and screen and scroll 
+      if ( ++ledcount >= (F_INTERRUPTS)) //1 sec
       {
          ledcount = 0;// 
          digitalWrite(PIN_LED, !digitalRead(PIN_LED));  
@@ -208,7 +208,6 @@ void TIM2_IRQHandler()     // Timer2 Interrupt Handler
          timestamp++;  // time update  
          if (state) timein = 0; // only on stop state
          else timein++;
-//         dt=gmtime(&timestamp);
          if (((timein % DTIDLE)==0)&&(!state)  ) {
             if ((timein % (30*DTIDLE))==0){ itAskTime=true;timein = 0;} // synchronise with ntp every x*DTIDLE
             if (stateScreen != stime) {itAskStime=true;} // start the time display
@@ -265,7 +264,7 @@ Serial.println(F("mainTask"));
 // Uart task: receive the karadio log and parse it.
 static void uartTask(void *pvParameters) {
 
-  Serial.println(F("uartTask"));
+  Serial.println(F("uartTask\n"));
   vTaskDelay(200);
   SERIALX.print(F("\r")); // cleaner
   SERIALX.print(F("\r")); // cleaner
@@ -397,9 +396,9 @@ Serial.println(F("Logo done\n"));
 	lline[2] = (char*)msg2;
 	drawFrame();
   delay(1000);
-  s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 330, NULL, tskIDLE_PRIORITY + 1, NULL);
-  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +260, NULL, tskIDLE_PRIORITY + 2, NULL);  
-  s3=xTaskCreate(ioTask, NULL, configMINIMAL_STACK_SIZE +220, NULL, tskIDLE_PRIORITY + 1, NULL);
+  s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 350, NULL, tskIDLE_PRIORITY + 1, NULL);
+  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +250, NULL, tskIDLE_PRIORITY + 2, NULL);  
+  s3=xTaskCreate(ioTask, NULL, configMINIMAL_STACK_SIZE +210, NULL, tskIDLE_PRIORITY + 1, NULL);
  
   if ( s1 != pdPASS || s2 != pdPASS || s3 != pdPASS ) {
     Serial.println(F("Task or Semaphore creation problem.."));

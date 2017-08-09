@@ -156,14 +156,14 @@ void TIM2_IRQHandler()     // Timer2 Interrupt Handler
       (void) irmp_ISR(); // call irmp ISR
 #endif      
 #ifdef RENC
-     if (++timerEncoder == (F_INTERRUPTS/1000)) //1msec = 1000 Hz
+     if (++timerEncoder >= (F_INTERRUPTS/1000)) //1msec = 1000 Hz
      {
         timerEncoder = 0;
         encoder->service(); //call encoder engine
      }
 #endif 
 // one second tempo: led blink, date/time and scrren and scroll 
-      if ( ++ledcount == (F_INTERRUPTS)) //1 sec
+      if ( ++ledcount >= (F_INTERRUPTS)) //1 sec
       {
          ledcount = 0;// 
          digitalWrite(PIN_LED, !digitalRead(PIN_LED));  
@@ -171,12 +171,17 @@ void TIM2_IRQHandler()     // Timer2 Interrupt Handler
          timestamp++;  // time update  
          if (state) timein = 0; // only on stop state
          else timein++;
-//         dt=gmtime(&timestamp);
-         if (((timein % DTIDLE)==0)&&(!state)  ) {
-            if ((timein % (30*DTIDLE))==0){ itAskTime=true;timein = 0;} // synchronise with ntp every x*DTIDLE
+
+         if (((timein % DTIDLE)==0)&&(!state)  ) 
+		 {
+            if ((timein % (30*DTIDLE))==0)
+			{ 
+				itAskTime=true;
+				timein = 0;
+			} // synchronise with ntp every x*DTIDLE
             if (stateScreen != stime) {itAskStime=true;} // start the time display
           } 
-//          if (((dt->tm_sec)==0)&&(stateScreen == stime)) { mTscreen = 1; }
+
           if (((timestamp%60)==0)&&(stateScreen == stime)) { mTscreen = 1; }
           if (stateScreen == smain) { markDraw(TIME); }
           if (!syncTime) itAskTime=true; // first synchro if not done
