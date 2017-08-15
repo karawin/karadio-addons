@@ -167,9 +167,10 @@ bool Switch3 = false;
 #ifdef oled096
 U8GLIB_SSD1306_128X64 u8g;
 #else
+#ifdef oled130
 U8GLIB_SH1106_128X64 u8g;
 #endif
-
+#endif
 
 
 
@@ -338,9 +339,10 @@ uint8_t u8g_com_hw_i2c_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void *arg_pt
 #ifdef oled096
 U8GLIB_SSD1306_128X64 u8g((u8g_com_fnptr)u8g_com_hw_i2c_fn,U8G_I2C_OPT_NONE);
 #else
+#ifdef oled130
 U8GLIB_SH1106_128X64 u8g((u8g_com_fnptr)u8g_com_hw_i2c_fn,U8G_I2C_OPT_NONE);
 #endif
-
+#endif
 
 #ifdef IR
     irmp_init();   // initialize irmp
