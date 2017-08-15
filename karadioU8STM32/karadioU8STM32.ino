@@ -16,7 +16,7 @@ It is due to the new arduinoSTM32 since july 2017
 #define RENC
 // Uncomment your oled type
 #define oled096  U8GLIB_SSD1306_128X64
-//#define oled1.30 U8GLIB_SH1106_128X64
+//#define oled130 U8GLIB_SH1106_128X64
 
 // your timezone offset
 #define TZO 1  // comment if the tzo is already given in the esp8266 or change the value
@@ -167,10 +167,9 @@ bool Switch3 = false;
 #ifdef oled096
 U8GLIB_SSD1306_128X64 u8g;
 #else
-#ifdef oled1.30
 U8GLIB_SH1106_128X64 u8g;
 #endif
-#endif
+
 
 
 
@@ -339,10 +338,9 @@ uint8_t u8g_com_hw_i2c_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void *arg_pt
 #ifdef oled096
 U8GLIB_SSD1306_128X64 u8g((u8g_com_fnptr)u8g_com_hw_i2c_fn,U8G_I2C_OPT_NONE);
 #else
-#ifdef oled1.30
 U8GLIB_SH1106_128X64 u8g((u8g_com_fnptr)u8g_com_hw_i2c_fn,U8G_I2C_OPT_NONE);
 #endif
-#endif
+
 
 #ifdef IR
     irmp_init();   // initialize irmp
