@@ -2,6 +2,10 @@
 
   KaradioU8STM32.pde
   Only for STM32 CPU  
+
+If buld complain about HardWire.h missing, replace it with Wire.h
+It is due to the new arduinoSTM32 since july 2017
+  
 */
 //-------------------------------------------------------
 // Please define your options here
@@ -11,7 +15,7 @@
 // UnComment the following lines if you want the rotary encoder
 #define RENC
 // Uncomment your oled type
-#define oled0.96 U8GLIB_SSD1306_128X64
+#define oled096  U8GLIB_SSD1306_128X64
 //#define oled1.30 U8GLIB_SH1106_128X64
 
 // your timezone offset
@@ -160,7 +164,7 @@ bool Switch3 = false;
 
 
 //U8GLIB_SSD1306_128X64 u8g;
-#ifdef oled0.96
+#ifdef oled096
 U8GLIB_SSD1306_128X64 u8g;
 #else
 #ifdef oled1.30
@@ -332,7 +336,7 @@ delay(2000);
 Serial.println("ready");
 
 uint8_t u8g_com_hw_i2c_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void *arg_ptr);
-#ifdef oled0.96
+#ifdef oled096
 U8GLIB_SSD1306_128X64 u8g((u8g_com_fnptr)u8g_com_hw_i2c_fn,U8G_I2C_OPT_NONE);
 #else
 #ifdef oled1.30
