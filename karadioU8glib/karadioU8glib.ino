@@ -9,6 +9,9 @@
 #define IR
 // Uncomment the following line to use the IRLib2 library
 #define IRLib2
+// Uncomment your oled type
+#define oled096  
+//#define oled130 
 //-------------------------------------------------------
 
 // your timezone offset
