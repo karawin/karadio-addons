@@ -473,7 +473,7 @@ void parse(char* line)
 {
   static byte dvolume = true; // display volume screen
   char* ici;
-Serial.println(line);
+//Serial.println(line);
 //return; 
    removeUtf8((byte*)line);
    

@@ -3,7 +3,7 @@
   KaradioU8STM32.pde
   Only for STM32 CPU  
 
-If buld complain about HardWire.h missing, replace it with Wire.h
+If build complain about HardWire.h missing, replace it with Wire.h
 It is due to the new arduinoSTM32 since july 2017
   
 */
