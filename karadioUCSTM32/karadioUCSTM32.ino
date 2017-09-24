@@ -300,7 +300,6 @@ void setup(void) {
 encoder = new ClickEncoder(PB7, PB8, PB9);
 #endif
 Serial.println(F("Setup"));
-
 // start the graphic library  
   ucg.begin(UCG_FONT_MODE_TRANSPARENT);
   ucg.clearScreen();
@@ -325,12 +324,13 @@ Serial.println(F("Setup"));
     ucg.clearScreen();
   }
   ucg.undoScale(); 
+  
   setup2(false);
   
   drawFrame(); 
-  s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 210, NULL, tskIDLE_PRIORITY + 1, NULL);
-  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +210, NULL, tskIDLE_PRIORITY + 2, NULL);
-  s3=xTaskCreate(ioTask, NULL, configMINIMAL_STACK_SIZE +210, NULL, tskIDLE_PRIORITY + 1, NULL);
+  s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 220, NULL, tskIDLE_PRIORITY + 1, NULL);
+  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +250, NULL, tskIDLE_PRIORITY + 2, NULL);
+  s3=xTaskCreate(ioTask, NULL, configMINIMAL_STACK_SIZE +220, NULL, tskIDLE_PRIORITY + 1, NULL);
 
 
   if ( s1 != pdPASS || s2 != pdPASS || s3 != pdPASS ) {
@@ -473,7 +473,7 @@ void parse(char* line)
 {
   static byte dvolume = true; // display volume screen
   char* ici;
-//Serial.println(line);
+Serial.println(line);
 //return; 
    removeUtf8((byte*)line);
    

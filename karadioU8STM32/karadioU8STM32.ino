@@ -15,8 +15,8 @@ It is due to the new arduinoSTM32 since july 2017
 // UnComment the following lines if you want the rotary encoder
 #define RENC
 // Uncomment your oled type
-#define oled096  U8GLIB_SSD1306_128X64
-//#define oled130 U8GLIB_SH1106_128X64
+//#define oled096  U8GLIB_SSD1306_128X64
+#define oled130 U8GLIB_SH1106_128X64
 
 // your timezone offset
 #define TZO 1  // comment if the tzo is already given in the esp8266 or change the value
