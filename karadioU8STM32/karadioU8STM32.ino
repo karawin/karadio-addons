@@ -1177,8 +1177,9 @@ void drawTime()
         sprintf(strdate,"%02d-%02d-%04d", (dt->tm_mon)+1, dt->tm_mday, dt->tm_year+1900);
         sprintf(strtime,"%02d:%02d:%02d", dt->tm_hour, dt->tm_min,dt->tm_sec);
         drawTTitle(strdate);            
-        setFont(u8g_font_9x15);  
-        u8g.drawStr((x/2)-(u8g.getStrWidth(strtime)/2),yy/3,strtime); 
+        //setFont(u8g_font_9x15);  
+        setFont(u8g_font_ncenR18);  
+        u8g.drawStr((x/2)-(u8g.getStrWidth(strtime)/2),yy/3+4,strtime); 
         // draw ip
         setFont(u8g_font_5x8);
         eepromReadStr(EEaddrIp, strtime);
