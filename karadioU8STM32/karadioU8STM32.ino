@@ -210,8 +210,9 @@ void TIM2_IRQHandler()     // Timer2 Interrupt Handler
          digitalWrite(PIN_LED, !digitalRead(PIN_LED));  
          // Time compute
          timestamp++;  // time update  
-         if (state) timein = 0; // only on stop state
-         else timein++;
+        /* if (state) timein = 0; // only on stop state
+         else*/ timein++;
+		 
          if (((timein % DTIDLE)==0)&&(!state)  ) {
             if ((timein % (30*DTIDLE))==0){ itAskTime=true;timein = 0;} // synchronise with ntp every x*DTIDLE
             if (stateScreen != stime) {itAskStime=true;} // start the time display
@@ -402,7 +403,7 @@ Serial.println(F("Logo done\n"));
   delay(1000);
   s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 350, NULL, tskIDLE_PRIORITY + 1, NULL);
   s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +250, NULL, tskIDLE_PRIORITY + 2, NULL);  
-  s3=xTaskCreate(ioTask, NULL, configMINIMAL_STACK_SIZE +210, NULL, tskIDLE_PRIORITY + 1, NULL);
+  s3=xTaskCreate(ioTask, NULL, configMINIMAL_STACK_SIZE +220, NULL, tskIDLE_PRIORITY + 1, NULL);
  
   if ( s1 != pdPASS || s2 != pdPASS || s3 != pdPASS ) {
     Serial.println(F("Task or Semaphore creation problem.."));
@@ -624,7 +625,7 @@ void parse(char* line)
       dt = gmtime(&timestamp);
       int year,month,day,hour,minute,second;
       sscanf(lstr,"%04d-%02d-%02dT%02d:%02d:%02d",&(year),&(month),&(day),&(hour),&(minute),&(second));
-      dt->tm_year = year; dt->tm_mon = month; dt->tm_mday = day;
+      dt->tm_year = year; dt->tm_mon = month-1; dt->tm_mday = day;
       dt->tm_hour = hour; dt->tm_min = minute;dt->tm_sec =second;
       dt->tm_year -= 1900;
       timestamp = mktime(dt); 
@@ -971,9 +972,12 @@ void translateENC()
   if (newButton != ClickEncoder::Open)
   {    
 //    Serial.print("Button: ");Serial.println(newButton);
-    if (newButton == ClickEncoder::Clicked) {stationOk();}
-    if (newButton == ClickEncoder::DoubleClicked) {startStop();}
-    if (newButton == ClickEncoder::Held) {stopStation();}
+    if (newButton == ClickEncoder::Clicked) {startStop();}
+    if (newButton == ClickEncoder::DoubleClicked) 
+    {
+        (stateScreen==smain)?Screen(stime):Screen(smain0);
+    } 
+    if (newButton == ClickEncoder::Held){stationOk();}
   }
 
   if ((stateScreen  != sstation)&&(newValue != 0))
@@ -1030,9 +1034,9 @@ void drawFrame()
 {
   dt=gmtime(&timestamp);
   if (x==84)
-  sprintf(strsec,"%02d-%02d  %02d:%02d:%02d",dt->tm_mon,dt->tm_mday, dt->tm_hour, dt->tm_min,dt->tm_sec);
+  sprintf(strsec,"%02d-%02d  %02d:%02d:%02d",(dt->tm_mon)+1,dt->tm_mday, dt->tm_hour, dt->tm_min,dt->tm_sec);
   else
-  sprintf(strsec,"%02d-%02d-%04d  %02d:%02d:%02d",dt->tm_mon,dt->tm_mday,dt->tm_year+1900, dt->tm_hour, dt->tm_min,dt->tm_sec);
+  sprintf(strsec,"%02d-%02d-%04d  %02d:%02d:%02d",(dt->tm_mon)+1,dt->tm_mday,dt->tm_year+1900, dt->tm_hour, dt->tm_min,dt->tm_sec);
   if (u8g.getWidth() == 84)
     setFont(u8g_font_5x8);
   else 
@@ -1163,14 +1167,14 @@ void drawTime()
 {
   char strdate[23];
   char strtime[20];
-  char strsec[3]; 
+//  char strsec[3]; 
   unsigned len;
   if (mTscreen)
   {
     u8g.firstPage();
     do {   
         dt=gmtime(&timestamp);
-        sprintf(strdate,"%02d-%02d-%04d", dt->tm_mon, dt->tm_mday, dt->tm_year+1900);
+        sprintf(strdate,"%02d-%02d-%04d", (dt->tm_mon)+1, dt->tm_mday, dt->tm_year+1900);
         sprintf(strtime,"%02d:%02d:%02d", dt->tm_hour, dt->tm_min,dt->tm_sec);
         drawTTitle(strdate);            
         setFont(u8g_font_9x15);  
@@ -1179,7 +1183,7 @@ void drawTime()
         setFont(u8g_font_5x8);
         eepromReadStr(EEaddrIp, strtime);
         sprintf(strdate,"IP: %s",strtime);
-        len = u8g.getStrWidth(strdate);
+//        len = u8g.getStrWidth(strdate);
         u8g.drawStr(4,yy-u8g.getFontLineSpacing(),strdate);
     } while( u8g.nextPage() ); 
   }        

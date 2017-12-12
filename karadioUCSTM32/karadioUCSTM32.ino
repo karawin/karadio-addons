@@ -169,16 +169,15 @@ void TIM2_IRQHandler()     // Timer2 Interrupt Handler
          digitalWrite(PIN_LED, !digitalRead(PIN_LED));  
          // Time compute
          timestamp++;  // time update  
-         if (state) timein = 0; // only on stop state
-         else timein++;
+        /* if (state) timein = 0; // only on stop state
+         else*/ timein++;
 
          if (((timein % DTIDLE)==0)&&(!state)  ) 
-		 {
+		     {
             if ((timein % (30*DTIDLE))==0)
-			{ 
-				itAskTime=true;
-				timein = 0;
-			} // synchronise with ntp every x*DTIDLE
+			      { 
+				      itAskTime=true;
+			      } // synchronise with ntp every x*DTIDLE
             if (stateScreen != stime) {itAskStime=true;} // start the time display
           } 
 
@@ -190,7 +189,6 @@ void TIM2_IRQHandler()     // Timer2 Interrupt Handler
           timerScroll++;
       }
 }
-
 
 //-------------------------------------------------------
 // Main task used for display the screen and blink the led
@@ -328,7 +326,7 @@ Serial.println(F("Setup"));
   setup2(false);
   
   drawFrame(); 
-  s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 220, NULL, tskIDLE_PRIORITY + 1, NULL);
+  s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 320, NULL, tskIDLE_PRIORITY + 1, NULL);
   s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +250, NULL, tskIDLE_PRIORITY + 2, NULL);
   s3=xTaskCreate(ioTask, NULL, configMINIMAL_STACK_SIZE +220, NULL, tskIDLE_PRIORITY + 1, NULL);
 
@@ -592,6 +590,7 @@ Serial.println(line);
       strcpy(lstr,ici+11);
       sscanf(lstr,"%d-%d-%dT%d:%d:%d",&dtl.tm_year,&dtl.tm_mon,&dtl.tm_mday,&dtl.tm_hour,&dtl.tm_min,&dtl.tm_sec);
       dtl.tm_year -= 1900;
+      dtl.tm_mon-=1;
 //      timein = dtl.tm_sec; //
       taskDISABLE_INTERRUPTS();
       timestamp = mktime(&dtl);
@@ -924,10 +923,12 @@ void translateENC()
     
   if (newButton != ClickEncoder::Open)
   {    
-//    Serial.print("Button: ");Serial.println(newButton);
-    if (newButton == ClickEncoder::Clicked) {stationOk();}
-    if (newButton == ClickEncoder::DoubleClicked) {startStop();}
-    if (newButton == ClickEncoder::Held) {stopStation();}
+    if (newButton == ClickEncoder::Clicked) {startStop();}
+    if (newButton == ClickEncoder::DoubleClicked) 
+    {
+        (stateScreen==smain)?Screen(stime):Screen(smain0);
+    } 
+    if (newButton == ClickEncoder::Held){stationOk();}
   }
 
   if ((stateScreen  != sstation)&&(newValue != 0))
@@ -1072,7 +1073,7 @@ void drawTime()
       case 2:
       case 1:
         dt=gmtime(&timestamp);
-        sprintf(strdate,"%02d-%02d-%04d", dt->tm_mon, dt->tm_mday, dt->tm_year+1900);
+        sprintf(strdate,"%02d-%02d-%04d", (dt->tm_mon)+1, dt->tm_mday, dt->tm_year+1900);
         sprintf(strtime,"%02d:%02d", dt->tm_hour, dt->tm_min);
         drawTTitle(strdate);
         ucg.setColor(0,0,0,0); 
@@ -1153,9 +1154,9 @@ void draw(int i)
         break;
         case VOLUME:
           ucg.setColor(0,0,200);   
-          ucg.drawBox(0,yy-4,x/2,4); 
+          ucg.drawFrame(0,yy-10,x/2,8); 
           ucg.setColor(255,0,0); 
-          ucg.drawBox(1,yy-3,((uint16_t)(x/2*volume)/255),2);                  
+          ucg.drawBox(1,yy-9,((uint16_t)(x/2*volume)/255),6);                  
         break;
         case TIME:
           char strsec[13]; 

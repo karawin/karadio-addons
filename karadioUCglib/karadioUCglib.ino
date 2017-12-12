@@ -541,9 +541,10 @@ if ((ici=strstr(pline,"##SYS.")) != NULL)
       dt = gmtime(&timestamp);
       int year,month,day,hour,minute,second;
       sscanf(lstr,"%04d-%02d-%02dT%02d:%02d:%02d",&(year),&(month),&(day),&(hour),&(minute),&(second));
-      dt->tm_year = year; dt->tm_mon = month; dt->tm_mday = day;
+      dt->tm_year = year; dt->tm_mon = month-1; dt->tm_mday = day;
       dt->tm_hour = hour; dt->tm_min = minute;dt->tm_sec =second;
       dt->tm_year -= 1900;
+	  
       timestamp = mktime(dt); 
       syncTime = true;
    }
@@ -650,12 +651,12 @@ static uint16_t oldmin = 0xff;;
   if (x==84)
   {
     sprintf(strsec,"%02d:%02d:%02d", dt->tm_hour, dt->tm_min,dt->tm_sec);
-    sprintf(strdte,"%02d-%02d",dt->tm_mon,dt->tm_mday);
+    sprintf(strdte,"%02d-%02d",(dt->tm_mon)+1,dt->tm_mday);
   }
   else
   {
     sprintf(strsec,"%02d:%02d:%02d", dt->tm_hour, dt->tm_min,dt->tm_sec);
-    sprintf(strdte,"%02d-%02d-%04d",dt->tm_mon,dt->tm_mday,dt->tm_year+1900);
+    sprintf(strdte,"%02d-%02d-%04d",(dt->tm_mon)+1,dt->tm_mday,dt->tm_year+1900);
   }
      
    if (dt->tm_min == oldmin) // only time

@@ -456,7 +456,7 @@ void parse(char* line)
       dt = gmtime(&timestamp);
       int year,month,day,hour,minute,second;
       sscanf(lstr,"%04d-%02d-%02dT%02d:%02d:%02d",&(year),&(month),&(day),&(hour),&(minute),&(second));
-      dt->tm_year = year; dt->tm_mon = month; dt->tm_mday = day;
+      dt->tm_year = year; dt->tm_mon = month-1; dt->tm_mday = day;
       dt->tm_hour = hour; dt->tm_min = minute;dt->tm_sec =second;
       dt->tm_year -= 1900;
       timestamp = mktime(dt); 
@@ -501,9 +501,9 @@ void draw(int xx)
   char strsec[30]; 
   dt=gmtime(&timestamp);
   if (x==84)
-  sprintf(strsec,"%02d-%02d  %02d:%02d:%02d",dt->tm_mon,dt->tm_mday, dt->tm_hour, dt->tm_min,dt->tm_sec);
+  sprintf(strsec,"%02d-%02d  %02d:%02d:%02d",(dt->tm_mon)+1,dt->tm_mday, dt->tm_hour, dt->tm_min,dt->tm_sec);
   else
-  sprintf(strsec,"%02d-%02d-%04d  %02d:%02d:%02d",dt->tm_mon,dt->tm_mday,dt->tm_year+1900, dt->tm_hour, dt->tm_min,dt->tm_sec);
+  sprintf(strsec,"%02d-%02d-%04d  %02d:%02d:%02d",(dt->tm_mon)+1,dt->tm_mday,dt->tm_year+1900, dt->tm_hour, dt->tm_min,dt->tm_sec);
 
 	u8g.firstPage();
 	do {
