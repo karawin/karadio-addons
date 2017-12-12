@@ -1098,6 +1098,7 @@ void drawNumber()
      do {  
         drawTTitle(ststr);   
         uint16_t xxx ;
+        setFont(u8g_font_ncenR18);  
         xxx = (x/2)-(u8g.getStrWidth(irStr)/2); 
         u8g.drawStr(xxx,yy/3, irStr);        
         screenBottom();  
@@ -1155,6 +1156,7 @@ void drawVolume()
       do { 
         drawTTitle(vlstr) ;  
         uint16_t xxx;
+        setFont(u8g_font_ncenR18);  
         xxx = (x/2)-(u8g.getStrWidth(aVolume)/2);     
         u8g.drawStr(xxx,yy/3,aVolume);
         screenBottom();   
