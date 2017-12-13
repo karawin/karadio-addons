@@ -880,7 +880,7 @@ void translateIR()
       case 0xF70815: /*(" LEFT");*/  minusVol();  break;
 
       case 0xFF0040:
-      case 0xF7081E:    /*(" -OK-");*/ stationOk();     break;
+      case 0xF7081E:    /*(" -OK-");*/ startStop();//stationOk();     break;
       case 0xFF0043:
       case 0xF70841:
       case 0xF70814: /*(" RIGHT");*/ plusVol();     break; // volume +
