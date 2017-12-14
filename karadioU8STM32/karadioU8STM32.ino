@@ -402,7 +402,7 @@ Serial.println(F("Logo done\n"));
 	drawFrame();
   delay(1000);
   s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 350, NULL, tskIDLE_PRIORITY + 1, NULL);
-  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +250, NULL, tskIDLE_PRIORITY + 2, NULL);  
+  s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +300, NULL, tskIDLE_PRIORITY + 2, NULL);  
   s3=xTaskCreate(ioTask, NULL, configMINIMAL_STACK_SIZE +220, NULL, tskIDLE_PRIORITY + 1, NULL);
  
   if ( s1 != pdPASS || s2 != pdPASS || s3 != pdPASS ) {
@@ -977,9 +977,15 @@ void translateENC()
     {
         (stateScreen==smain)?Screen(stime):Screen(smain0);
     } 
-    if (newButton == ClickEncoder::Held){stationOk();}
+    if (newButton == ClickEncoder::Held)
+    {
+      if (stateScreen  != sstation)  currentStation();
+      if (newValue != 0)
+        stationNum(atoi(futurNum)+newValue);
+        timerScreen = 0;
+    }
   }
-
+  else{
   if ((stateScreen  != sstation)&&(newValue != 0))
   {    
 //    Serial.print("Value: ");Serial.println(newValue);
@@ -991,6 +997,7 @@ void translateENC()
 //    Serial.print("Value: ");Serial.println(newValue);
       stationNum(atoi(futurNum)+newValue);
   } 
+  }
   oldValue += newValue;
 }
 #endif

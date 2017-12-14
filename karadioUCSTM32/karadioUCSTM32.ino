@@ -928,9 +928,15 @@ void translateENC()
     {
         (stateScreen==smain)?Screen(stime):Screen(smain0);
     } 
-    if (newButton == ClickEncoder::Held){stationOk();}
-  }
-
+    if (newButton == ClickEncoder::Held)
+	{
+      if (stateScreen  != sstation)  currentStation();
+      if (newValue != 0)
+        stationNum(atoi(futurNum)+newValue);
+		timerScreen = 0;
+    }
+  } else
+  {
   if ((stateScreen  != sstation)&&(newValue != 0))
   {    
 //    Serial.print("Value: ");Serial.println(newValue);
@@ -942,6 +948,7 @@ void translateENC()
 //    Serial.print("Value: ");Serial.println(newValue);
       stationNum(atoi(futurNum)+newValue);
   } 
+  }
   oldValue += newValue;
 }
 #endif
