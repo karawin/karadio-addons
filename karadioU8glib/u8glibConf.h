@@ -95,10 +95,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 0.96" I2C IIC SPI Serial 128X64
 #ifdef oled096
 U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE|U8G_I2C_OPT_DEV_0);	// I2C / TWI
-#else
+#endif
 #ifdef oled130
 U8GLIB_SH1106_128X64	u8g(U8G_I2C_OPT_NONE|U8G_I2C_OPT_DEV_0);	// I2C / TWI
-#endif
 #endif
 
 //U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_DEV_0|U8G_I2C_OPT_NO_ACK|U8G_I2C_OPT_FAST);	// Fast I2C / TWI
@@ -155,12 +154,14 @@ U8GLIB_SH1106_128X64	u8g(U8G_I2C_OPT_NONE|U8G_I2C_OPT_DEV_0);	// I2C / TWI
 //
 //Karadio: Choose this one for http://www.ebay.fr/itm/262558872574?_trksid=p2057872.m2749.l2649&ssPageName=STRK%3AMEBIDX%3AIT
 // 84X48 84 * 48 Nokia 5110 Module Lcd
+#ifdef Nokia5110
 #define PIN_SCE   7
 #define PIN_RESET 6
 #define PIN_DC    5
 #define PIN_SDIN  4
 #define PIN_SCLK  3
-//U8GLIB_PCD8544 u8g(PIN_SCLK, PIN_SDIN, PIN_SCE, PIN_DC, PIN_RESET); // SPI Com: SCK = 13, MOSI = 11, CS = 10, A0 = 9, Reset = 8
+U8GLIB_PCD8544 u8g(PIN_SCLK, PIN_SDIN, PIN_SCE, PIN_DC, PIN_RESET); // SPI Com: SCK = 13, MOSI = 11, CS = 10, A0 = 9, Reset = 8
+#endif
 //
 
 #endif
