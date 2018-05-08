@@ -4,7 +4,7 @@ Collection of addons for the KaraDio project.
 See the Karadio project at https://github.com/karawin/Ka-Radio<br>
 
   KaradioNokia5110 :(Deprecated): A lcd nokia5110 only interface.<br>
-  karadiolcd16x2: : same for a 16*2 lcd. Added Four switch by Paul Sijben<br>
+  karadiolcd16x2: : same for a 16*2 lcd. Added Four switches by Paul Sijben<br>
   karadioU8glib: For monochrome lcd or oled with an arduino pro mini. Optionnal: an IR decoder for the remote control.<br>
   karadioUCglib: Same as  karadioU8glib but for color lcd.<br>
   karadioUCSTM32: A complete interface with a color lcd, IR sensor, encoder knob. Based on a low cost STM32 board.<br>
