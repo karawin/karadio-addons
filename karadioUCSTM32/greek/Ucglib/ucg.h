@@ -2139,6 +2139,7 @@ extern const ucg_fntpgm_uint8_t ucg_font_osr41_hr[] UCG_FONT_SECTION("ucg_font_o
 extern const ucg_fntpgm_uint8_t ucg_font_osr41_tf[] UCG_FONT_SECTION("ucg_font_osr41_tf");
 extern const ucg_fntpgm_uint8_t ucg_font_osr41_tn[] UCG_FONT_SECTION("ucg_font_osr41_tn");
 extern const ucg_fntpgm_uint8_t ucg_font_osr41_tr[] UCG_FONT_SECTION("ucg_font_osr41_tr");
+extern const ucg_fntpgm_uint8_t ucg_font_helvR14_gr[] UCG_FONT_SECTION("ucg_font_helvR14_gr");
 
 #endif
 

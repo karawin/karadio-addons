@@ -825,44 +825,60 @@ void translateIR()
     if (!(irmp_data.flags& IRMP_FLAG_REPETITION)) // avoid repetition
     switch(code)
 		{
-			case 0xFF0046: 
-			case 0xF70812:	/*(" FORWARD");*/  stationPlus(); break;
+//			case 0xFF0046: 
+//			case 0xF70812:	/*(" FORWARD");*/  stationPlus(); break;
+//			case 0xFF0044:
+//          case 0xF70842:
+//			case 0xF70815: /*(" LEFT");*/  minusVol();  break;
+//			case 0xFF0040:
+//			case 0xF7081E:		/*(" -OK-");*/ stationOk();			break;
+//			case 0xFF0043:
+//          case 0xF70841:
+//			case 0xF70814: /*(" RIGHT");*/ plusVol();     break; // volume +
+//			case 0xFF0015:
+//			case 0xF70813:	/*(" REVERSE");*/ stationMinus(); break;
+//			case 0xFF0016:
+//			case 0xF70801: /*(" 1");*/ nbStation('1');   break;
+//			case 0xFF0019:
+//			case 0xF70802: /*(" 2");*/ nbStation('2');   break;
+//			case 0xFF000D:
+//			case 0xF70803: /*(" 3");*/ nbStation('3');   break;
+//			case 0xFF000C:
+//			case 0xF70804: /*(" 4");*/ nbStation('4');   break;
+//			case 0xFF0018:
+//			case 0xF70805: /*(" 5");*/ nbStation('5');   break;
+//			case 0xFF005E:
+//			case 0xF70806: /*(" 6");*/ nbStation('6');   break;
+//			case 0xFF0008:
+//			case 0xF70807: /*(" 7");*/ nbStation('7');   break;
+//			case 0xFF001C:
+//			case 0xF70808: /*(" 8");*/ nbStation('8');   break;
+//			case 0xFF005A:
+//			case 0xF70809: /*(" 9");*/ nbStation('9');   break;
+//			case 0xFF0042:
+//			case 0xF70817: /*(" *");*/   startStation();   break;
+//			case 0xFF0052:
+//			case 0xF70800: /*(" 0");*/ nbStation('0');   break;
+//			case 0xFF004A:
+//			case 0xF7081D: /*(" #");*/  stopStation();    break;
 
-			case 0xFF0044:
-      case 0xF70842:
-			case 0xF70815: /*(" LEFT");*/  minusVol();  break;
-
-			case 0xFF0040:
-			case 0xF7081E:		/*(" -OK-");*/ stationOk();			break;
-			case 0xFF0043:
-      case 0xF70841:
-			case 0xF70814: /*(" RIGHT");*/ plusVol();     break; // volume +
-			case 0xFF0015:
-			case 0xF70813:	/*(" REVERSE");*/ stationMinus(); break;
-			case 0xFF0016:
-			case 0xF70801: /*(" 1");*/ nbStation('1');   break;
-			case 0xFF0019:
-			case 0xF70802: /*(" 2");*/ nbStation('2');   break;
-			case 0xFF000D:
-			case 0xF70803: /*(" 3");*/ nbStation('3');   break;
-			case 0xFF000C:
-			case 0xF70804: /*(" 4");*/ nbStation('4');   break;
-			case 0xFF0018:
-			case 0xF70805: /*(" 5");*/ nbStation('5');   break;
-			case 0xFF005E:
-			case 0xF70806: /*(" 6");*/ nbStation('6');   break;
-			case 0xFF0008:
-			case 0xF70807: /*(" 7");*/ nbStation('7');   break;
-			case 0xFF001C:
-			case 0xF70808: /*(" 8");*/ nbStation('8');   break;
-			case 0xFF005A:
-			case 0xF70809: /*(" 9");*/ nbStation('9');   break;
-			case 0xFF0042:
-			case 0xF70817: /*(" *");*/   startStation();   break;
-			case 0xFF0052:
-			case 0xF70800: /*(" 0");*/ nbStation('0');   break;
-			case 0xFF004A:
-			case 0xF7081D: /*(" #");*/  stopStation();    break;
+			case 0xFF0018:	/*(" FORWARD");*/  stationPlus(); break;
+			case 0xFF0008: /*(" LEFT");*/  minusVol();  break;
+			case 0xFF001C:		/*(" -OK-");*/ stationOk();			break;
+			case 0xFF005A: /*(" RIGHT");*/ plusVol();     break; // volume +
+			case 0xFF0052:	/*(" REVERSE");*/ stationMinus(); break;
+			case 0xFF0045: /*(" 1");*/ nbStation('1');   break;
+			case 0xFF0046: /*(" 2");*/ nbStation('2');   break;
+			case 0xFF0047: /*(" 3");*/ nbStation('3');   break;
+			case 0xFF0044: /*(" 4");*/ nbStation('4');   break;
+			case 0xFF0040: /*(" 5");*/ nbStation('5');   break;
+			case 0xFF0043: /*(" 6");*/ nbStation('6');   break;
+			case 0xFF0007: /*(" 7");*/ nbStation('7');   break;
+			case 0xFF0015: /*(" 8");*/ nbStation('8');   break;
+			case 0xFF0009: /*(" 9");*/ nbStation('9');   break;
+			case 0xFF0016: /*(" *");*/   startStation();   break;
+			case 0xFF0019: /*(" 0");*/ nbStation('0');   break;
+			case 0xFF000D: /*(" #");*/  stopStation();    break;
 			default:;
 			/*SERIALX.println(F(" other button   "));*/
 		}// End Case
@@ -870,16 +886,20 @@ void translateIR()
     if ((irmp_data.flags& IRMP_FLAG_REPETITION)) // repetition
     switch(code)
     {
-      case 0xFF0046: 
-      case 0xF70812:  /*(" FORWARD");*/  stationPlus(); break;
-      case 0xFF0015:
-      case 0xF70813:  /*(" REVERSE");*/ stationMinus(); break;
-      case 0xFF0044:
-      case 0xF70842:
-      case 0xF70815: /*(" LEFT");*/  decrVol();  break;
-      case 0xFF0043:
-      case 0xF70841:
-      case 0xF70814: /*(" RIGHT");*/ incrVol();  break; // volume +
+//      case 0xFF0046: 
+//      case 0xF70812:  /*(" FORWARD");*/  stationPlus(); break;
+//      case 0xFF0015:
+//      case 0xF70813:  /*(" REVERSE");*/ stationMinus(); break;
+//      case 0xFF0044:
+//      case 0xF70842:
+//      case 0xF70815: /*(" LEFT");*/  decrVol();  break;
+//      case 0xFF0043:
+//      case 0xF70841:
+//      case 0xF70814: /*(" RIGHT");*/ incrVol();  break; // volume +
+		case 0xFF0018:	/*(" FORWARD");*/  stationPlus(); break;
+		case 0xFF0052:	/*(" REVERSE");*/ stationMinus(); break;		
+		case 0xFF0008: /*(" LEFT");*/  minusVol();  break;
+		case 0xFF005A: /*(" RIGHT");*/ plusVol();     break; // volume +		
       default:;
     }	  
 	}
@@ -1001,7 +1021,7 @@ void drawStation()
       case 2:   
         ucg.setColor(0,0,0,0);  
         ucg.drawBox(0,40,x,yy);     
-        ucg.setFont(ucg_font_fur14_tf);
+        ucg.setFont(ucg_font_helvR14_gr);
         ucg.setColor(0,20,255,20);
         ddot = strstr(sline,":");
         if (ddot != NULL)
