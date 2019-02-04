@@ -132,6 +132,7 @@ int16_t yy;		//Height of screen
 int16_t x ;		//Width of the screen
 int16_t z ;		// an internal offset for y
 
+void Screen(typeScreen st);
 
 // init timer 2 for irmp led screen etc
 void timer2_init ()
@@ -572,7 +573,6 @@ Serial.println(line);
       dvolume = false; // don't show volume on start station
    }else
  //////list station   #CLI.LISTINFO#:
-   if ((ici=strstr(line,"LISTINFO#:")) != NULL)  
    {
       char* ptrstrstr;
       strcpy(sline, ici+10);
@@ -1260,4 +1260,3 @@ void drawScreen()
 ////////////////////////////////////////
 void loop(void) { // not used on freertos
 }
-

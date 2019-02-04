@@ -9,6 +9,12 @@ Use Universal 8bit Graphics Library, https://github.com/olikraus/ucglib/
 */
 
 
+#if defined(__arm__)
+#ifndef __NOP
+#define __NOP __asm volatile ("nop")
+#endif
+#endif
+
 #include <SPI.h>
 #include <Ucglib.h>
 
@@ -174,4 +180,3 @@ Enjoy.
 
 jpc 05/2017
 */
-
