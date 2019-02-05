@@ -29,6 +29,7 @@
 #define PIN_LED LED_BUILTIN
 #define PIN_PLAYING PB10
 
+
 // nams <--> num of line
 #define STATIONNAME 0
 #define STATION1  1
@@ -47,17 +48,15 @@
 
 // constants
 const int  BAUD            = 115200;  // any standard serial value: 300 - 115200
-const int  EEaddr          = 0;     // EEPROM address for storing WPM
-const int  EEaddr1         = 2;     // EEPROM address for LCD address
-const int  EEaddrIp        = 10;    // EEPROM address for the IP
+const int  EEaddrIp        = 0;    // EEPROM address for the IP
 
 #ifdef IR
-const char  msg[]  PROGMEM    = {"Karadio IR+clcd V1.2"}; //
+const char  msg[]  PROGMEM    = {"Karadio IR+clcd V1.3"}; //
 #else
-const char  msg[] PROGMEM     = {"Karadio clcd V1.2"}; //
+const char  msg[] PROGMEM     = {"Karadio clcd V1.3"}; //
 #endif
 const char  msg1[] PROGMEM   = {"(c) KaraWin"}; //
-const char  msg2[] PROGMEM   = {"https://hackaday.io/project/11570-wifi-webradio-with-esp8266-and-vs1053"};
+const char  msg2[] PROGMEM   = {"https://github.com/karawin/Ka-Radio"};
 
 #ifdef IR
   IRMP_DATA irmp_data;
@@ -106,8 +105,13 @@ uint8_t  mline[LINES] ; // mark to display
 // svolume: display the volume
 char aVolume[4] = {"0"}; 
 
+
+#define MTNODISPLAY	0
+#define MTNEW		1
+#define MTREFRESH	2
+
 // state of the transient screen
-uint8_t mTscreen = 1; // 0 dont display, 1 display full, 2 display variable part
+uint8_t mTscreen = MTNEW; // 0 dont display, 1 display full, 2 display variable part
 //
 //sstation: display a list of stations
 uint8_t highlight=0;// index in sline of the highlighted station
@@ -132,7 +136,14 @@ int16_t yy;		//Height of screen
 int16_t x ;		//Width of the screen
 int16_t z ;		// an internal offset for y
 
+
+typedef enum Lang {Latin,Cyrillic,Greek} LANG; 
+static LANG charset = Latin;  // latin or other
+typedef enum sizefont  {small, text,middle,large} sizefont;
+
+
 void Screen(typeScreen st);
+void setfont(sizefont size);
 
 // init timer 2 for irmp led screen etc
 void timer2_init ()
@@ -182,7 +193,7 @@ void TIM2_IRQHandler()     // Timer2 Interrupt Handler
             if (stateScreen != stime) {itAskStime=true;} // start the time display
           } 
 
-          if (((timestamp%60)==0)&&(stateScreen == stime)) { mTscreen = 1; }
+          if (((timestamp%60)==0)&&(stateScreen == stime)) { mTscreen = MTNEW; }
           if (stateScreen == smain) { markDraw(TIME); }
           if (!syncTime) itAskTime=true; // first synchro if not done
 // Other slow timers        
@@ -273,7 +284,6 @@ void setup2(bool ini)
   lline[0] = (char*)msg;
   lline[1] = (char*)msg1;
   lline[2] = (char*)msg2;
-
   eepromReadStr(EEaddrIp, oip);
   lline[3] = (char*)"IP:";
   lline[4] = oip;
@@ -292,7 +302,7 @@ void setup(void) {
    SERIALX.begin(BAUD);
    Serial.begin(BAUD);
 #ifdef IR
-    irmp_init();   // initialize irmp
+ irmp_init();   // initialize irmp
  irStr[0] = 0;
 #endif  
 #ifdef RENC
@@ -303,14 +313,14 @@ Serial.println(F("Setup"));
   ucg.begin(UCG_FONT_MODE_TRANSPARENT);
   ucg.clearScreen();
   ucg.setRotate90();
-  ucg.setFont(ucg_font_6x13_mf);
-  ucg.setFontPosTop();
 // some constant data
+  setfont(text);
   y = - ucg.getFontDescent()+ ucg.getFontAscent() +4; //interline
   yy = ucg.getHeight(); // screen height
   x = ucg.getWidth();   // screen width
   z = 0; 
-  //banner
+  //banner;
+  ucg.setFontPosTop();
   ucg.setColor(0, 255, 0);
   for (int i = 0;i<3;i++)
   {
@@ -320,17 +330,16 @@ Serial.println(F("Setup"));
     delay(500);
     if (i%2) ucg.setScale2x2(); 
     else ucg.undoScale(); 
-    ucg.clearScreen();
+    ucg.clearScreen();   
   }
   ucg.undoScale(); 
-  
+
   setup2(false);
-  
+     setfont(text);
   drawFrame(); 
   s1=xTaskCreate(mainTask, NULL, configMINIMAL_STACK_SIZE + 320, NULL, tskIDLE_PRIORITY + 1, NULL);
   s2=xTaskCreate(uartTask, NULL, configMINIMAL_STACK_SIZE +250, NULL, tskIDLE_PRIORITY + 2, NULL);
   s3=xTaskCreate(ioTask, NULL, configMINIMAL_STACK_SIZE +220, NULL, tskIDLE_PRIORITY + 1, NULL);
-
 
   if ( s1 != pdPASS || s2 != pdPASS || s3 != pdPASS ) {
     Serial.println(F("Task or Semaphore creation problem.."));
@@ -339,11 +348,124 @@ Serial.println(F("Setup"));
   timer2_init(); // initialize timer2
   // Start the task scheduler - here the process starts
   vTaskStartScheduler();
-  Serial.println(F("Started")); 
   // In case of a scheduler error
   Serial.println(F("Die - insufficient heap memory?"));
   while(1);   
 
+}
+
+////////////////////////////////////////
+void setfont(sizefont size)
+{
+	int inX = x;
+	if (yy <=80) inX = 96; // corrected for small yy
+//	printf("setfont charset: %d, size: %d,yy: %d, x: %d,  inX: %d\n",charset,size,yy,x,inX);
+	switch(size)
+	{
+		case small:
+		switch(inX)
+		{
+			case 320:
+			ucg.setFont(ucg_font_5x7_mf);
+			break;
+			case 96:
+			ucg.setFont(ucg_font_5x7_mf);
+			break;
+			case 132:
+			default: // 160, 128
+			ucg.setFont(ucg_font_5x7_mf);
+			;
+		}
+		break;
+
+		case text:
+		switch(inX)
+		{
+			case 320:
+			switch (charset){ 	
+								case Cyrillic: ucg.setFont(ucg_font_crox1c );break; 
+								case Greek:ucg.setFont(ucg_font_ncenR14_gr );break;
+								default:
+								case Latin:ucg.setFont(ucg_font_6x13_mf );break;
+							}
+//			charset?ucg.setFont(ucg_font_crox5h ):ucg.setFont(ucg_font_inr16_mf ) ;
+			break;
+			case 128:
+			switch (charset){
+								case Cyrillic: ucg.setFont(ucg_font_crox1c );break; 
+								case Greek:ucg.setFont(ucg_font_helvR14_gr );break;
+								default:
+								case Latin:ucg.setFont(ucg_font_6x13_mf );break;
+							}
+//			charset?ucg.setFont(ucg_font_crox1c ):ucg.setFont(ucg_font_5x7_mf) ;
+			break;
+			case 132:
+			switch (charset){
+								case Cyrillic: ucg.setFont(ucg_font_crox1c );break; 
+								case Greek:ucg.setFont(ucg_font_helvR14_gr );break;
+								default:
+								case Latin:ucg.setFont(ucg_font_6x13_mf );break;
+							}
+//			charset?ucg.setFont(ucg_font_crox1c ):ucg.setFont(ucg_font_5x7_mf) ;
+			break;
+			case 96:
+			switch (charset){
+								case Cyrillic: ucg.setFont(ucg_font_crox1c );break; 
+								case Greek:ucg.setFont(ucg_font_helvR14_gr );break;
+								default:
+								case Latin:ucg.setFont(ucg_font_5x7_mf );break;
+							}
+//			charset?ucg.setFont(ucg_font_crox1c ):ucg.setFont(ucg_font_4x6_mf) ;
+			break;
+			default: // 160
+			switch (charset){
+								case Cyrillic: ucg.setFont(ucg_font_crox1c );break; 
+								case Greek:ucg.setFont(ucg_font_6x13_gr );break;
+								default:
+								case Latin:ucg.setFont(ucg_font_6x13_mf );break;
+							}
+//			charset?ucg.setFont(ucg_font_crox1c ):ucg.setFont(ucg_font_6x13_mf) ;
+			;
+		}
+		break;
+
+		case middle:
+		switch(inX)
+		{
+			case 320: ucg.setFont(ucg_font_inb19_mf );
+//			charset?ucg.setFont(ucg_font_crox5h ):ucg.setFont(ucg_font_inr33_mf);
+			break;
+			case 96: ucg.setFont(  ucg_font_helvB12_tr);
+//			charset?ucg.setFont(ucg_font_crox2h ):ucg.setFont(ucg_font_6x12_mf);
+			break;
+			case 132: 
+			default: // 160
+        ucg.setFont(  ucg_font_helvB12_tr);
+//			charset?ucg.setFont(ucg_font_crox3c ):ucg.setFont(ucg_font_fur14_tf);
+		}
+		break;
+		case large:
+		switch(inX)
+		{
+			case 320:
+			ucg.setFont(ucg_font_inr38_mf); 
+			break;
+			case 96:
+			ucg.setFont(ucg_font_inr38_mf); 
+			break;
+			case 132:
+			default: // 160, 128
+			ucg.setFont(ucg_font_inr38_mf); 
+      ;
+		}
+		break;
+		default:;
+	}
+	
+		if (yy <= 80)
+			y = - ucg.getFontDescent()+ ucg.getFontAscent()+3 ; //interline
+		else
+			y = - ucg.getFontDescent()+ ucg.getFontAscent() +4; //interline
 }
 
 
@@ -352,10 +474,11 @@ Serial.println(F("Setup"));
 // Clear all buffers and indexes
 void clearAll()
 {
-      title[0] = 0;
-      station[0]=0;
+    title[0] = 0;
+    station[0]=0;
 	  for (int i=1;i<LINES;i++) {lline[i] = NULL;iline[i] = 0;tline[i] = 0;mline[i]=1;}
 }
+
 ////////////////////////////////////////
 void cleartitle(uint8_t froml)
 {
@@ -369,22 +492,115 @@ void cleartitle(uint8_t froml)
      }  
 }
 
-////////////////////////////////////////
-void removeUtf8(byte *characters)
+// non linear cyrillic conversion
+struct _utf8To1251_t
 {
-  int iindex = 0;
-  while (characters[iindex])
-  {
-    if ((characters[iindex] >= 0xc2)&&(characters[iindex] <= 0xc3)) // only 0 to FF ascii char
-    {
-      //      SERIALX.println((characters[iindex]));
-      characters[iindex+1] = ((characters[iindex]<<6)&0xFF) | (characters[iindex+1] & 0x3F);
-      int sind = iindex+1;
-      while (characters[sind]) { characters[sind-1] = characters[sind];sind++;}
-      characters[sind-1] = 0;
+  uint16_t utf8;
+  uint8_t c1251;
+
+};
+typedef struct _utf8To1251_t utf8To1251_t;
+#define UTF8TO1251	30
+const utf8To1251_t utf8To1251[UTF8TO1251] = {{0x401,0x45/*0xa8*/},{0x402,0x80},{0x403,0x81},{0x404,0xaa},{0x405,0xbd},{0x406,0x49/*0xb2*/},{0x407,0xaf},{0x408,0xa3},
+									   {0x409,0x8a},{0x40a,0x8c},{0x40b,0x8e},{0x40c,0x8d},{0x40e,0xa1},{0x40f,0x8f},{0x452,0x90},{0x451,0x65/*0xb8*/},
+									   {0x453,0x83},{0x454,0xba},{0x455,0xbe},{0x456,0x69/*0xb3*/},{0x457,0xbf},{0x458,0x6a/*0xbc*/},{0x459,0x9a},{0x45a,0x9c},
+									   {0x45b,0x9e},{0x45c,0x9d},{0x45f,0x9f},{0x490,0xa5},{0x491,0xb4},
+									   {0,0}};
+
+//Cyrillic									   
+uint8_t to1251(uint16_t utf8)
+{
+	int i;
+	if (utf8 > 0x491) return 0x1f;
+	for (i = 0; i<UTF8TO1251;i++)
+	{
+		if (utf8 == utf8To1251[i].utf8)
+		{
+//			printf("to1251: utf8: %x, ret: %x\n",utf8,utf8To1251[i].c1251);
+			return utf8To1251[i].c1251;
+		}
+	}
+	
+//	printf("to1251: utf8: %x, ret: %x\n",utf8,(utf8 - 0x350)& 0xff);
+	return ((utf8 - 0x350)& 0xff );
+}
+
+//Greek
+uint8_t to1253(uint16_t utf8)
+{
+	return ((utf8 - 0x300)& 0xff );
+}
+
+////////////////////////////////////////
+uint16_t UtoC(uint8_t high,uint8_t low)
+{
+	uint16_t res = (( high<<6)  |( low & 0x3F )) & 0x7FF;
+	return(res);
+}
+
+//Thanks to Max
+void ucEraseSlashes(char * str) {
+  //Symbols: \" \' \\ \? \/
+  char * sym = str, * sym1;
+  if (str != NULL) {
+    while (*sym != 0) {
+      if (*sym == 0x5c) {
+        sym1 = sym + 1;
+        if (*sym1 == 0x22 || *sym1 == 0x27 || *sym1 == 0x5c || *sym1 == 0x3f || *sym1 == 0x2f) {
+          *sym = 0x1f; //Erase \ to non-printable symbol
+          sym++;
+        } 
+      } 
+      sym++;
     }
-    iindex++;
+  }   
+}
+//-Max
+
+
+
+void removeUtf8(char *characters)
+{
+  int Rindex = 0;
+  uint16_t utf8;
+  ucEraseSlashes(characters) ; 
+  while (characters[Rindex])
+  {
+    if ((characters[Rindex] >= 0xc2)&&(characters[Rindex] <=0xc3)) // only 0 to FF ascii char
+    {
+		utf8 = UtoC(characters[Rindex],characters[Rindex+1]) ; // the utf8
+		characters[Rindex+1] =  (uint8_t)utf8 &0xff;
+		if (utf8>= 0x100) characters[Rindex+1] = 0x1f; //Erase to non-printable symbol
+		
+		int sind = Rindex+1;
+		while (characters[sind]) { characters[sind-1] = characters[sind];sind++;}
+		characters[sind-1] = 0; 
+    }
+    else if ((characters[Rindex] >= 0xd0)&&(characters[Rindex] <= 0xd3)) // only 0 to FF ascii char
+    {	
+		utf8 = UtoC(characters[Rindex],characters[Rindex+1]) ; // the utf8
+		characters[Rindex+1] = to1251(utf8);
+		
+		int sind = Rindex+1;
+		while (characters[sind]) { characters[sind-1] = characters[sind];sind++;}
+		characters[sind-1] = 0;
+		
+		charset = Cyrillic;
+	}
+    else if ((characters[Rindex] >= 0xcd)&&(characters[Rindex] <= 0xcf)) // only 0 to FF ascii char
+    {	
+		utf8 = UtoC(characters[Rindex],characters[Rindex+1]) ; // the utf8
+		characters[Rindex+1] = to1253(utf8);
+		
+		int sind = Rindex+1;
+		while (characters[sind]) { characters[sind-1] = characters[sind];sind++;}
+		characters[sind-1] = 0;
+		
+		charset = Greek;
+	}
+    Rindex++;
   }
+  
 }
 
 ////////////////////////////////////////
@@ -394,7 +610,6 @@ void eepromReadStr(int addr, char* str)
   do {
     rd = EEPROM.read(addr++);
     *str = rd;
-//    SERIALX.println(str[0],16);
     str++;
   } while (( rd != 0)&&( rd != 0xFF)); 
   *str = 0;
@@ -417,7 +632,7 @@ void separator(char* from)
 {
     char* interp;
 //    len = strlen(from);
-    ucg.setFont(ucg_font_6x13_mf);
+    setfont(text);
     while (from[strlen(from)-1] == ' ') from[strlen(from)-1] = 0; // avoid blank at end
     while ((from[0] == ' ') ){ strcpy( from,from+1); }
     interp=strstr(from," - ");
@@ -472,9 +687,9 @@ void parse(char* line)
 {
   static byte dvolume = true; // display volume screen
   char* ici;
-Serial.println(line);
-//return; 
-   removeUtf8((byte*)line);
+Serial.println(line); 
+   removeUtf8((char*)line);
+   setfont(text);
    
  //////  reset of the esp
    if ((ici=strstr(line,"VS Version")) != NULL) 
@@ -493,39 +708,47 @@ Serial.println(line);
  ////// ICY4 Description  ##CLI.ICY4#:
     if ((ici=strstr(line,"ICY4#: ")) != NULL)
     {
+		if ((station!= NULL)&& (lline[STATION2] != NULL))
+		{  
+			char newstation[BUFLEN];
+			strcpy(newstation,lline[STATION1]);strcat(newstation," - "); 
+			strcat(newstation,lline[STATION2]);
+			strcpy(lline[STATION1],newstation);
+			markDrawReset(STATION1);
+		}
 	    strcpy(genre,ici+7);
-//	    if (lline[GENRE] == NULL)
-	    {
-	      lline[GENRE] = genre;
-        markDraw(GENRE);  
-	    }
+	    lline[GENRE] = genre;
+        markDrawReset(GENRE);  
     } else 
  ////// ICY0 station name   ##CLI.ICY0#:
    if ((ici=strstr(line,"ICY0#: ")) != NULL)
    {
 //      clearAll();
 	    if (strlen(ici+7) == 0) strcpy (station,nameset);
-      else strcpy(station,ici+7);
-	    separator(station);
+		else strcpy(station,ici+7);
+	    separator(station);  
    } else
  ////// STOPPED  ##CLI.STOPPED#
    if ((ici=strstr(line,"STOPPED")) != NULL)
    {
        digitalWrite(PIN_PLAYING, LOW);
        state = false;
-	     cleartitle(3);
+	   cleartitle(3);
        strcpy(title,"STOPPED");
        lline[TITLE1] = title;
-       mline[TITLE1] = 1;
-       
+       mline[TITLE1] = 1;  
+       charset = Latin;    
    }    
  /////// Station Ip      ' Station Ip:
    else  
-   if ((ici=strstr(line,"Station Ip: ")) != NULL) 
+   if ((ici=strstr(line,"Station Ip: ")) != NULL)
    {
        eepromReadStr(EEaddrIp, oip);
        if ( strcmp(oip,ici+12) != 0)
+       {
+         EEPROM.init();
          eepromWriteStr(EEaddrIp,ici+12 ); 
+       }
    } else
  //////Nameset    ##CLI.NAMESET#:
    if ((ici=strstr(line,"MESET#: ")) != NULL)  
@@ -535,23 +758,26 @@ Serial.println(line);
 	   ici = strstr(nameset," ");
      if (ici != NULL)
      {
-	      strncpy(nameNum,nameset,ici-nameset+1);
-	      nameNum[ici - nameset+1] = 0;
-        strcpy (futurNum,nameNum);
+		  clearAll();
+	    strncpy(nameNum,nameset,ici-nameset+1);
+	    nameNum[ici - nameset+1] = 0;
+		  strcpy (futurNum,nameNum);
      }
 	   strcpy(nameset,nameset+strlen(nameNum));
      lline[STATIONNAME] = nameset;
-     markDraw(STATIONNAME);          
+     mTscreen= MTNEW;
+     Screen(smain0);
+     markDrawReset(STATIONNAME);          
    } else
  //////Playing    ##CLI.PLAYING#
    if ((ici=strstr(line,"YING#")) != NULL)  
    {
-	   digitalWrite(PIN_PLAYING, HIGH);
+	 digitalWrite(PIN_PLAYING, HIGH);
      state = true;
      if (stateScreen == stime) Screen(smain0);
      if (strcmp(title,"STOPPED") == 0)
      {
-		   title[0] = 0;
+		    cleartitle(3);
 		   separator(title);
      }
    } else
@@ -573,10 +799,12 @@ Serial.println(line);
       dvolume = false; // don't show volume on start station
    }else
  //////list station   #CLI.LISTINFO#:
-   if (((ici=strstr(line,"LISTNUM#:")) != NULL)  || ((ici=strstr(line,"LISTNUM#:")) != NULL))
+   if (((ici=strstr(line,"LISTNUM#:")) != NULL)  || ((ici=strstr(line,"LISTINFO#:")) != NULL))
    {
       char* ptrstrstr;
-      strcpy(sline, ici+10);
+      if (*(ici+9) == ':') // LISTINFO
+        strcpy(sline, ici+10);
+      else strcpy(sline, ici+9); //LISTNUM
       ptrstrstr = strstr(sline,",");
       if (ptrstrstr != NULL)  *ptrstrstr =0;
       Screen(sstation);
@@ -629,8 +857,7 @@ void serial()
          Rbindex = 0;
         }       
 	    }
-    }
-    
+    }  
 }
 
 ////////////////////////////////////////
@@ -638,38 +865,37 @@ void serial()
 void scroll()
 {
 int16_t len;
-  if(stateScreen == smain)
-  {
+	setfont(text);
 	for (int i = 0;i < LINES;i++)
 	{  
-	   if (tline[i]>0) 
-	   {
-	     if (tline[i] == 3) 
-	     {
-	      iline[i]= 0;
-	      if (ucg.getStrWidth(lline[i]) > x) markDraw(i);//draw(i);
-	     }
-	     tline[i]--;		 
-	   } 
-	   else
-	   {
-		   if (i == 0)
-			 len = ucg.getStrWidth(nameNum) + ucg.getStrWidth(lline[i]+iline[i]);
-		   else
-			 len = ucg.getStrWidth(lline[i]+iline[i]);
-		   if (len > x)
-      {      
- 		    iline[i] += x/6;
-        len = iline[i];
-        while ((*(lline[i]+iline[i])!=' ')&&(*(lline[i]+iline[i])!='-')&&(iline[i]!= 0))iline[i]--;
-        if (iline[i]==0) iline[i]=len;     
-		    markDraw(i); //draw(i);
-      }
-		   else 
-			  {tline[i] = 4;}
-	   }
+		if (lline[i] != NULL)
+		{	
+			if (tline[i]>0) 
+			{
+				len = (i==0)? ucg.getStrWidth(nameNum)+ucg.getStrWidth(lline[i]):ucg.getStrWidth(lline[i]);
+				if ((tline[i] == 4) && (len > x)) 
+				{
+					iline[i]= 0;
+					mline[i]=1;//draw(i);
+				}
+				tline[i]--;		 
+			} 
+			else
+			{
+				len = (i==0)? ucg.getStrWidth(nameNum)+ucg.getStrWidth(lline[i]+iline[i]):ucg.getStrWidth(lline[i]+iline[i]);
+				if (len > x)
+				{      
+					len = iline[i];
+					iline[i] += (x/ucg.getStrWidth("MM"));//x/6;
+					while ((*(lline[i]+iline[i])!=' ')&&(*(lline[i]+iline[i])!='-')&&(iline[i]!= len))iline[i]--;
+					if (iline[i]==len) iline[i] += (x/ucg.getStrWidth("MM"));//x/6;
+ 					mline[i]=1; //draw(i);
+				}
+				else 
+					{tline[i] = 6;}
+			}
+		}
 	}
-  }
 }
 
 ////////////////////////////
@@ -956,10 +1182,10 @@ void translateENC()
 
 void drawTTitle(char* ttitle)
 {
-        ucg.setFont(ucg_font_helvB18_tf); 
+        setfont(middle);
         uint16_t xxx = (x/2)-(ucg.getStrWidth(ttitle)/2);
         ucg.setColor(0,60,60,60);  
-        ucg.drawBox(0,0,x,41); 
+        ucg.drawBox(0,0,x,40); 
         ucg.setColor(0,200,200,255);  
         ucg.drawString(xxx,10,0,ttitle);   
 }
@@ -970,21 +1196,22 @@ void drawNumber()
 {
   char ststr[] = {"Number"};
     switch (mTscreen){
-      case 1:     
+      case MTNEW:
+//		TTitleStr[0] = 0;  	  
         drawTTitle(ststr);   
       // no break
-      case 2:  
+      case MTREFRESH:  
         uint16_t xxx ;
         xxx = (x/2)-(ucg.getStrWidth(irStr)/2); 
         ucg.setColor(0,0,0,0);  
         ucg.drawBox(0,40,x,yy);     
-        ucg.setFont(ucg_font_inr38_tf); 
+        setfont(large); 
         ucg.setColor(0,20,255,20);  
         ucg.drawString(xxx,60,0, irStr);
         break;
       default:; 
     } 
-    mTscreen = 0;    
+    mTscreen = MTNODISPLAY;    
 }
 #endif
 
@@ -995,14 +1222,18 @@ void drawStation()
   char ststr[] = {"Station"};
   char* ddot;
   int16_t len;
+  LANG scharset;
+  	scharset = charset;
+	charset = Latin;
     switch (mTscreen){
-      case 1:  
+      case MTNEW:
+//	    TTitleStr[0] = 0;     
         drawTTitle(ststr);        
       // no break
-      case 2:   
+      case MTREFRESH:   
         ucg.setColor(0,0,0,0);  
         ucg.drawBox(0,40,x,yy);     
-        ucg.setFont(ucg_font_fur14_tf);
+        setfont(middle);
         ucg.setColor(0,20,255,20);
         ddot = strstr(sline,":");
         if (ddot != NULL)
@@ -1017,15 +1248,16 @@ void drawStation()
           else 
               playable = true;             
           strcpy (futurNum,sline+1); 
-          ucg.drawString((x/2)-(ucg.getStrWidth(sline+1)/2),55,0, sline+1);
+          ucg.drawString((x/2)-(ucg.getStrWidth(sline)/2),yy/3,0, sline);
           len = (x/2)-(ucg.getStrWidth(ddot)/2);
           if (len <0) len = 0;
-          ucg.drawString(len,90,0, ddot);
+          ucg.drawString(len,yy/3+ ucg.getFontAscent()+y,0, ddot);
         }
         break;
       default:; 
     } 
-    mTscreen = 0;    
+    mTscreen = MTNODISPLAY; 
+	charset = scharset;	
 }
 ////////////////////
 // draw the volume screen
@@ -1033,13 +1265,13 @@ void drawVolume()
 {
   char vlstr[] = {"Volume"};
     switch (mTscreen){
-      case 1: 
+      case MTNEW: 
         drawTTitle(vlstr) ;  
       // no break
-      case 2:
+      case MTREFRESH:
         ucg.setColor(0,0,0,0);  
 //        ucg.setFont(ucg_font_inr49_tf);
-        ucg.setFont(ucg_font_inr38_mf);  
+        setfont(large);  
         uint16_t xxx;
         xxx = (x/2)-(ucg.getStrWidth(aVolume)/2);
         ucg.drawBox(0,40,x,yy);     
@@ -1048,7 +1280,7 @@ void drawVolume()
         break;
       default:; 
     }
-    mTscreen = 0; 
+    mTscreen = MTNODISPLAY; 
 }
 
 void drawSecond()
@@ -1060,14 +1292,13 @@ void drawSecond()
   dt=gmtime(&timestamp);
   uint16_t len;
   sprintf(strsec,":%02d",dt->tm_sec);
-  ucg.setFont(ucg_font_6x13_mf);
-  len = ucg.getStrWidth(strsec);
-//  ucg.setColor(0,0,0,0);  
-//  ucg.drawBox(x-len-8,yy-18,x,yy);  
-  ucg.setColor(0,dt->tm_sec*5,255,dt->tm_sec*5);
+  setfont(text);
+  len = ucg.getStrWidth("xxx");
+
   ucg.setColor(1,0,0,0); 
   ucg.setFontMode(UCG_FONT_MODE_SOLID); 
-  ucg.drawString(x-len-8,yy-18,0,strsec); 
+  ucg.setColor(0,dt->tm_sec*5,255,dt->tm_sec*5);
+  ucg.drawString(x-len-8,yy-15,0,strsec); 
   ucg.setFontMode(UCG_FONT_MODE_TRANSPARENT);
   insec = timein; //to avoid redisplay
   }    
@@ -1078,16 +1309,17 @@ void drawTime()
   char strtime[20];
   unsigned len;
     switch (mTscreen){
-      case 2:
-      case 1:
+      case MTREFRESH:
+      case MTNEW:
         dt=gmtime(&timestamp);
         sprintf(strdate,"%02d-%02d-%04d", (dt->tm_mon)+1, dt->tm_mday, dt->tm_year+1900);
         sprintf(strtime,"%02d:%02d", dt->tm_hour, dt->tm_min);
         drawTTitle(strdate);
         ucg.setColor(0,0,0,0); 
-        ucg.setFont(ucg_font_inr38_mf); 
-         
-        if ( mTscreen ==1)
+//        ucg.setFont(ucg_font_inr38_mf); 
+		   setfont(large);
+		
+        if ( mTscreen ==MTNEW)
           ucg.drawBox(0,40,x,yy); 
         else
           ucg.drawBox(0,55,x,40+ucg.getFontDescent()+ucg.getFontAscent());     
@@ -1096,19 +1328,28 @@ void drawTime()
         ucg.drawString((x/2)-(ucg.getStrWidth(strtime)/2),55,0,strtime); 
 
         // draw ip
-        ucg.setFont(ucg_font_6x13_mf);
+//        ucg.setFont(ucg_font_6x13_mf);
+		setfont(text);
         eepromReadStr(EEaddrIp, strtime);
         sprintf(strdate,"IP: %s",strtime);
         len = ucg.getStrWidth(strdate);
         ucg.setColor(0,0,0,0);  
         ucg.drawBox(0,yy-20,4+len,yy);  
         ucg.setColor(0,255,128,128);  
-        ucg.drawString(4,yy-18,0,strdate);         break;
+        ucg.drawString(4,yy-15,0,strdate);
+		break;
       default:;
     }
-    mTscreen = 0;       
+	drawSecond();
+    mTscreen = MTNODISPLAY;       
 }
 
+void markDrawReset(int i)
+{
+  mline[i] = 1;
+  iline[i] = 0;
+  tline[i] = 0;
+}
 // Mark the lines to draw
 void markDraw(int i)
 {
@@ -1118,14 +1359,14 @@ void markDraw(int i)
 // draw the full screen of lines
 void drawLines()
 {
-   ucg.setFont(ucg_font_6x13_mf);
+   setfont(text);
    for (int i=0;i<LINES;i++)
    {
      if (mline[i]) draw(i); 
    }
 }
 
-//////////////////////////
+//////////////////////d////
 // set color of font per line
 void setColor(int i)
 {
@@ -1147,65 +1388,84 @@ void draw(int i)
 {
 //  Serial.print("Draw ");Serial.print(i);Serial.print("  ");Serial.println(lline[i]);
      if ( mline[i]) mline[i] =0;
-      if (i >=3) z = y/2 ; else z = 0;
+      if (i >=3) z = (y/2)+1 ; else z = 0;
       switch (i) {
         case STATIONNAME:
         ucg.setColor(255,255,255);  
-        ucg.drawBox(0,0,x,((x == 84)?10:13)-ucg.getFontDescent());  
+//       ucg.drawBox(0,0,x,((x == 84)?10:13)-ucg.getFontDescent());
+    		ucg.drawBox(0,0,x,y-1/*-ucg_GetFontDescent(&ucg)*/);  
+        setfont(text);
         ucg.setColor(0,0,0);  
-        if (nameNum[0] ==0)  ucg.drawString(1,2,0,lline[i]+iline[i]);
-        else 
-        {
-          ucg.drawString(1,2,0,nameNum);
-          ucg.drawString(ucg.getStrWidth(nameNum)-2,2,0,lline[i]+iline[i]);
-        }
+		if (lline[i] != NULL)
+		{
+			if (nameNum[0] ==0)  ucg.drawString(1,1,0,lline[i]+iline[i]);
+			else 
+			{
+			ucg.drawString(1,1,0,nameNum);
+			ucg.drawString(ucg.getStrWidth(nameNum)-2,1,0,lline[i]+iline[i]);
+			}
+		}
         break;
         case VOLUME:
+     		if ((yy > 80)||(lline[TITLE21] == NULL)||(strlen(lline[TITLE21]) ==0))
+    		{
           ucg.setColor(0,0,200);   
-          ucg.drawFrame(0,yy-10,x/2,8); 
-          ucg.setColor(255,0,0); 
-          ucg.drawBox(1,yy-9,((uint16_t)(x/2*volume)/255),6);                  
+    		  if (yy <= 80)
+    		  {
+	      		ucg.drawFrame(0,yy-10,x/3,8); 
+	      		ucg.setColor(255,0,0); 
+	      		ucg.drawBox(1,yy-9,((uint16_t)(x/3*volume)/255),6); 
+	    	  }
+	    	  else
+	    	  {
+	    		ucg.drawFrame(0,yy-10,x/2,8); 
+	    		ucg.setColor(255,0,0); 
+	    		ucg.drawBox(1,yy-9,((uint16_t)(x/2*volume)/255),6); 
+		      }
+	    	}                  
         break;
         case TIME:
           char strsec[13]; 
+          setfont(small);
           dt=gmtime(&timestamp);
           uint16_t len,xpos,xxpos,yyy;
           sprintf(strsec,"%02d:%02d:%02d",dt->tm_hour, dt->tm_min,dt->tm_sec);
-          ucg.setFont(ucg_font_6x13_mf);
           len = ucg.getStrWidth(strsec);
-          xpos = (3*x/4)-(len/2);
-          xxpos = xpos+len;
-          yyy = yy -12;
-//          ucg.setColor(0,0,0,0);  
-//          ucg.drawBox(xpos,yyy,xxpos,yy);  
           ucg.setColor(250,250,255); 
           ucg.setColor(1,0,0,0); 
           ucg.setFontMode(UCG_FONT_MODE_SOLID);
-          ucg.drawString(xpos,yyy,0,strsec); 
+		      if (yy <= 80)
+		      {
+		  	    xpos = (5*x/8)-(len/2);
+		  	    yyy = yy -10;
+		  	    ucg.drawString(xpos,yyy,0,strsec); 
+		      } else
+		      {
+		  	    xpos = (3*x/4)-(len/2);
+		  	    yyy = yy -10;
+			     ucg.drawString(xpos,yyy,0,strsec); 
+		       }			  
           ucg.setFontMode(UCG_FONT_MODE_TRANSPARENT);
         break;
         default:
           ucg.setColor(0,0,0); 
-          ucg.drawBox(0,y*i+z,x,((x == 84)?10:13)-ucg.getFontDescent()); 
+          ucg.drawBox(0,y*i+z,x,y+1); 
+          setfont(text);
           setColor(i);
-          ucg.drawString(0,y*i+z+1,0,lline[i]+iline[i]);                
-      }      
+          if (lline[i] != NULL) ucg.drawString(0,y*i+z,0,lline[i]+iline[i]); 
+	 }      
 }
 
 ////////////////////
 void drawFrame()
 {
-    ucg.setFont(ucg_font_6x13_mf);
-    ucg.setColor(0,255,255,0);  
-    ucg.setColor(1,0,255,255);  
-    ucg.drawGradientLine(0,(4*y) - (y/2)-5,x,0);
-    ucg.setColor(0,255,255,255);  
-    ucg.drawBox(0,0,x-1,(x == 84)?10:13);  
-
-    for (int i=0;i<LINES;i++) { 
-      draw(i);
-    }
-    mTscreen = 1;
+    setfont(text);
+		ucg.setColor(0,255,255,0);  
+		ucg.setColor(1,0,255,255);  
+		ucg.drawGradientLine(0,(4*y) - (y/2)-3,x,0);
+		ucg.setColor(0,255,255,255);  
+		ucg.drawBox(0,0,x-1,(x == 84)?10:13);  
+		for (int i=0;i<LINES;i++)  draw(i);
 }
 ////////////////////////////
 // Change the current screen
@@ -1213,7 +1473,7 @@ void drawFrame()
 void Screen(typeScreen st){
   if (stateScreen != st)
   {
-    mTscreen = 1;
+    mTscreen = MTNEW;
 #ifdef IR
 // if a number is entered, play it.
     if (strlen(irStr) >0)
@@ -1223,7 +1483,7 @@ void Screen(typeScreen st){
 #endif
   }
   else
-    if (mTscreen == 0) mTscreen = 2;
+    if (mTscreen == MTNODISPLAY) mTscreen = MTREFRESH;
   stateScreen = st;  
   timein = 0;
 }
@@ -1247,7 +1507,6 @@ void drawScreen()
       break; 
     case stime:
       drawTime(); 
-      drawSecond();
       break;     
     case snumber:
 #ifdef IR    
@@ -1255,8 +1514,9 @@ void drawScreen()
 #endif      
       break;
     default: 
-      drawLines();       
+    drawLines();       
   }
+  mTscreen = MTNODISPLAY;
 }
 ////////////////////////////////////////
 void loop(void) { // not used on freertos
