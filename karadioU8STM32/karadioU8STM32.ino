@@ -555,8 +555,10 @@ void parse(char* line)
    if ((ici=strstr_P(line,PSTR("Station Ip: "))) != NULL) 
    {
       eepromReadStr(EEaddrIp, oip);
-      if ( strcmp(oip,ici+12) != 0)
+      if ( strcmp(oip,ici+12) != 0){
+		EEPROM.init();
         eepromWriteStr(EEaddrIp,ici+12 ); 
+		}
    } else
  //////Namesett    ##CLI.NAMESET#:
    if ((ici=strstr_P(line,PSTR("MESET#: "))) != NULL)  

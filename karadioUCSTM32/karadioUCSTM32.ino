@@ -236,8 +236,7 @@ static void mainTask(void *pvParameters) {
         if (stateScreen == smain) scroll();  
         timerScroll = 0;
      }    
-    vTaskDelay(100);
-//    drawScreen();      
+    vTaskDelay(100);     
   }
 }
 
@@ -689,7 +688,7 @@ void parse(char* line)
   char* ici;
 Serial.println(line); 
    removeUtf8((char*)line);
-   setfont(text);
+//   setfont(text);
    
  //////  reset of the esp
    if ((ici=strstr(line,"VS Version")) != NULL) 
@@ -1329,7 +1328,7 @@ void drawTime()
 
         // draw ip
 //        ucg.setFont(ucg_font_6x13_mf);
-		setfont(text);
+		    setfont(text);
         eepromReadStr(EEaddrIp, strtime);
         sprintf(strdate,"IP: %s",strtime);
         len = ucg.getStrWidth(strdate);
