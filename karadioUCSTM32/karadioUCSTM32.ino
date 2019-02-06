@@ -688,7 +688,6 @@ void parse(char* line)
   char* ici;
 Serial.println(line); 
    removeUtf8((char*)line);
-//   setfont(text);
    
  //////  reset of the esp
    if ((ici=strstr(line,"VS Version")) != NULL) 
