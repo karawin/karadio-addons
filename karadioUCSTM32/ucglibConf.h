@@ -1,13 +1,12 @@
 // ucglibConf.h
 /*
 
->>> Before compiling: Please remove comment from the constructor of the
+>>> Before compiling: Please remove comment from the type of the
 >>> connected graphics display (see below).
 
 Use Universal 8bit Graphics Library, https://github.com/olikraus/ucglib/
 
 */
-
 
 #if defined(__arm__)
 #ifndef __NOP
@@ -18,29 +17,53 @@ Use Universal 8bit Graphics Library, https://github.com/olikraus/ucglib/
 #include <SPI.h>
 #include <Ucglib.h>
 #include <clib/ucg_karadio32_fonts.h>
-/*
 
-  >>> Please uncomment (and update) one of the following constructors. <<<  
-*/
-// uncomment only one screen width
-//#define W128
-//#define W132
-#define W160
-//#define W320
-//#define W400
-//#define W480
 
-// uncomment only your screen type
+//-----------------------------------------------------
+//  >>> Please uncomment  one of the following . <<<  
+//-----------------------------------------------------
+//#define ILI9163_18x128x128
+//#define SSD1351_18x128x128
+//#define SSD1351_18x128x128_FT
+//#define SEPS225_16x128x128_UNIVISION
+//#define PCF8833_16x132x132
+#define ST7735_18x128x160
+//#define ILI9341_18x240x320
+//#define HX8352C_18x240x400
+//#define ILI9486_18x320x480
+
+//-----------------------------------------------
+// Do not modify after this line
+//-----------------------------------------------
+#if defined (ILI9163_18x128x128)
+Ucglib_ILI9163_18x128x128_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
+#define W128
+#elif defined (SSD1351_18x128x128)
+Ucglib_SSD1351_18x128x128_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
+#define W128
+#elif defined (SSD1351_18x128x128_FT)
+Ucglib_SSD1351_18x128x128_FT_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
+#define W128
+#elif defined (SEPS225_16x128x128_UNIVISION)
+Ucglib_SEPS225_16x128x128_UNIVISION_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
+#define W128
+#elif defined (PCF8833_16x132x132)
+Ucglib_PCF8833_16x132x132_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
+#define W132
+#elif defined (ST7735_18x128x160)
 Ucglib_ST7735_18x128x160_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
-//Ucglib_ILI9163_18x128x128_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
-//Ucglib_ILI9341_18x240x320_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
-//Ucglib_SSD1351_18x128x128_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
-//Ucglib_SSD1351_18x128x128_FT_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
-//Ucglib_PCF8833_16x132x132_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
+#define W160
+#elif defined (ILI9341_18x240x320)
+Ucglib_ILI9341_18x240x320_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
+#define W320
+#elif defined (HX8352C_18x240x400)
+Ucglib_HX8352C_18x240x400_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
+#define W400
+#elif defined (ILI9486_18x320x480)
+Ucglib_ILI9486_18x320x480_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
+#define W480
+#endif
 
-//Ucglib_SEPS225_16x128x128_UNIVISION_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
-//Ucglib_HX8352C_18x240x400_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
-//Ucglib_ILI9486_18x320x480_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
 
 // not supported
 //#define W64
@@ -48,7 +71,7 @@ Ucglib_ST7735_18x128x160_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 Version 1.0: Initial release 05/2017 jp Cocatrix
-Version 1.1: Initial release 02/2019 jp Cocatrix
+Version 1.3:release 02/2019 jp Cocatrix
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
