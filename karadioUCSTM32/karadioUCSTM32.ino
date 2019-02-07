@@ -359,112 +359,67 @@ void setfont(sizefont size)
 	int inX = x;
 	if (yy <=80) inX = 96; // corrected for small yy
 //	printf("setfont charset: %d, size: %d,yy: %d, x: %d,  inX: %d\n",charset,size,yy,x,inX);
-	switch(size)
-	{
-		case small:
-		switch(inX)
-		{
-			case 320:
-			ucg.setFont(ucg_font_5x7_mf);
-			break;
-			case 96:
-			ucg.setFont(ucg_font_5x7_mf);
-			break;
-			case 132:
-			default: // 160, 128
-			ucg.setFont(ucg_font_5x7_mf);
-			;
-		}
-		break;
 
-		case text:
-		switch(inX)
-		{
-			case 320:
-			switch (charset){ 	
-								case Cyrillic: ucg.setFont(ucg_font_crox1c );break; 
-								case Greek:ucg.setFont(ucg_font_ncenR14_gr );break;
-								default:
-								case Latin:ucg.setFont(ucg_font_6x13_mf );break;
-							}
-//			charset?ucg.setFont(ucg_font_crox5h ):ucg.setFont(ucg_font_inr16_mf ) ;
-			break;
-			case 128:
-			switch (charset){
-								case Cyrillic: ucg.setFont(ucg_font_crox1c );break; 
-								case Greek:ucg.setFont(ucg_font_helvR14_gr );break;
-								default:
-								case Latin:ucg.setFont(ucg_font_6x13_mf );break;
-							}
-//			charset?ucg.setFont(ucg_font_crox1c ):ucg.setFont(ucg_font_5x7_mf) ;
-			break;
-			case 132:
-			switch (charset){
-								case Cyrillic: ucg.setFont(ucg_font_crox1c );break; 
-								case Greek:ucg.setFont(ucg_font_helvR14_gr );break;
-								default:
-								case Latin:ucg.setFont(ucg_font_6x13_mf );break;
-							}
-//			charset?ucg.setFont(ucg_font_crox1c ):ucg.setFont(ucg_font_5x7_mf) ;
-			break;
-			case 96:
-			switch (charset){
-								case Cyrillic: ucg.setFont(ucg_font_crox1c );break; 
-								case Greek:ucg.setFont(ucg_font_helvR14_gr );break;
-								default:
-								case Latin:ucg.setFont(ucg_font_5x7_mf );break;
-							}
-//			charset?ucg.setFont(ucg_font_crox1c ):ucg.setFont(ucg_font_4x6_mf) ;
-			break;
-			default: // 160
-			switch (charset){
-								case Cyrillic: ucg.setFont(ucg_font_crox1c );break; 
-								case Greek:ucg.setFont(ucg_font_6x13_gr );break;
-								default:
-								case Latin:ucg.setFont(ucg_font_6x13_mf );break;
-							}
-//			charset?ucg.setFont(ucg_font_crox1c ):ucg.setFont(ucg_font_6x13_mf) ;
-			;
-		}
-		break;
+  switch(size)
+  {
+//------------------------------------------------------------------    
+    case small:
+#if defined (W320) ||  defined (W400) ||  defined (W480)
+        ucg.setFont(ucg_font_7x13_mf);
+#endif 
+//---------------       
+#if defined (W128) ||  defined (W132) ||  defined (W160)
+        ucg.setFont(ucg_font_6x10_mf);
+#endif
+      break;
+    case text:
+#if defined (W320) ||  defined (W400) ||  defined (W480)
+      switch (charset){   
+                case Cyrillic: ucg.setFont(ucg_font_crox4h );break; 
+                case Greek:ucg.setFont(ucg_font_helvR14_gr );break;
+                default:
+                case Latin:ucg.setFont(ucg_font_ncenR14_tr );break;
+      }  
+#endif   
+//---------------       
+#if defined (W128) ||  defined (W132) ||  defined (W160)
+      switch (charset){   
+                case Cyrillic: ucg.setFont(ucg_font_crox1c );break; 
+                case Greek:ucg.setFont(ucg_font_6x13_gr );break;
+                default:
+                case Latin:ucg.setFont(ucg_font_6x13_mf );break;
+      }  
+#endif   
+            
+      break;
+//------------------------------------------------------------------    
+    case middle:
+#if defined (W320) ||  defined (W400)  ||  defined (W480)
+      ucg.setFont(ucg_font_inr24_mr );
+#endif               
+//---------------       
+#if defined (W128) ||  defined (W132) ||  defined (W160)
+ucg.setFont(  ucg_font_helvB12_tr);
+#endif   
+      break;
+//------------------------------------------------------------------    
+    case large:
+#if defined (W320) ||  defined (W400) ||  defined (W480)
+      ucg.setFont(ucg_font_inr57_tr); 
+#endif               
+//---------------       
+#if defined (W128) ||  defined (W132) ||  defined (W160)
+ucg.setFont(  ucg_font_inr38_mf);
+#endif   
+      break;
+//------------------------------------------------------------------        
+    default:;
+  }
 
-		case middle:
-		switch(inX)
-		{
-			case 320: ucg.setFont(ucg_font_inb19_mf );
-//			charset?ucg.setFont(ucg_font_crox5h ):ucg.setFont(ucg_font_inr33_mf);
-			break;
-			case 96: ucg.setFont(  ucg_font_helvB12_tr);
-//			charset?ucg.setFont(ucg_font_crox2h ):ucg.setFont(ucg_font_6x12_mf);
-			break;
-			case 132: 
-			default: // 160
-        ucg.setFont(  ucg_font_helvB12_tr);
-//			charset?ucg.setFont(ucg_font_crox3c ):ucg.setFont(ucg_font_fur14_tf);
-		}
-		break;
-		case large:
-		switch(inX)
-		{
-			case 320:
-			ucg.setFont(ucg_font_inr38_mf); 
-			break;
-			case 96:
-			ucg.setFont(ucg_font_inr38_mf); 
-			break;
-			case 132:
-			default: // 160, 128
-			ucg.setFont(ucg_font_inr38_mf); 
-      ;
-		}
-		break;
-		default:;
-	}
-	
 		if (yy <= 80)
 			y = - ucg.getFontDescent()+ ucg.getFontAscent()+3 ; //interline
 		else
-			y = - ucg.getFontDescent()+ ucg.getFontAscent() +4; //interline
+			y = - ucg.getFontDescent()+ ucg.getFontAscent() +4; //interline   
 }
 
 
@@ -1182,10 +1137,10 @@ void drawTTitle(char* ttitle)
 {
         setfont(middle);
         uint16_t xxx = (x/2)-(ucg.getStrWidth(ttitle)/2);
-        ucg.setColor(0,60,60,60);  
-        ucg.drawBox(0,0,x,40); 
-        ucg.setColor(0,200,200,255);  
-        ucg.drawString(xxx,10,0,ttitle);   
+        ucg.setColor(0,50,50,120);  
+        ucg.drawBox(0,0,x,yy/5); 
+        ucg.setColor(0,250,250,0);  
+        ucg.drawString(xxx,(yy/5-ucg.getFontAscent())>>1,0,ttitle);   
 }
 #ifdef IR
 ////////////////////
@@ -1202,10 +1157,10 @@ void drawNumber()
         uint16_t xxx ;
         xxx = (x/2)-(ucg.getStrWidth(irStr)/2); 
         ucg.setColor(0,0,0,0);  
-        ucg.drawBox(0,40,x,yy);     
+        ucg.drawBox(0,yy/5,x,yy);     
         setfont(large); 
         ucg.setColor(0,20,255,20);  
-        ucg.drawString(xxx,60,0, irStr);
+        ucg.drawString(xxx,yy/3,0, irStr);
         break;
       default:; 
     } 
@@ -1226,11 +1181,13 @@ void drawStation()
     switch (mTscreen){
       case MTNEW:
 //	    TTitleStr[0] = 0;     
-        drawTTitle(ststr);        
+        drawTTitle(ststr); 
+        ucg.setColor(0,0,0,0);   
+        ucg.drawBox(0,yy/5,x,yy);           
       // no break
       case MTREFRESH:   
         ucg.setColor(0,0,0,0);  
-        ucg.drawBox(0,40,x,yy);     
+        ucg.drawBox(0,yy/3,x,yy);     
         setfont(middle);
         ucg.setColor(0,20,255,20);
         ddot = strstr(sline,":");
@@ -1264,7 +1221,9 @@ void drawVolume()
   char vlstr[] = {"Volume"};
     switch (mTscreen){
       case MTNEW: 
-        drawTTitle(vlstr) ;  
+        drawTTitle(vlstr) ; 
+        ucg.setColor(0,0,0,0);  
+        ucg.drawBox(0,yy/5,x,yy);     
       // no break
       case MTREFRESH:
         ucg.setColor(0,0,0,0);  
@@ -1272,9 +1231,9 @@ void drawVolume()
         setfont(large);  
         uint16_t xxx;
         xxx = (x/2)-(ucg.getStrWidth(aVolume)/2);
-        ucg.drawBox(0,40,x,yy);     
+        ucg.drawBox(0,yy/3,x,yy);     
         ucg.setColor(0,20,255,20);  
-        ucg.drawString(xxx,60,0,aVolume); 
+        ucg.drawString(xxx,yy/3,0,aVolume); 
         break;
       default:; 
     }
@@ -1318,12 +1277,12 @@ void drawTime()
 		   setfont(large);
 		
         if ( mTscreen ==MTNEW)
-          ucg.drawBox(0,40,x,yy); 
+          ucg.drawBox(0,yy/5,x,yy); 
         else
-          ucg.drawBox(0,55,x,40+ucg.getFontDescent()+ucg.getFontAscent());     
+          ucg.drawBox(0,yy/3,x,40+ucg.getFontDescent()+ucg.getFontAscent());     
         //ucg.setFont(ucg_font_helvB18_hf);  
         ucg.setColor(0,100,255,100);  
-        ucg.drawString((x/2)-(ucg.getStrWidth(strtime)/2),55,0,strtime); 
+        ucg.drawString((x/2)-(ucg.getStrWidth(strtime)/2),yy/3,0,strtime); 
 
         // draw ip
 //        ucg.setFont(ucg_font_6x13_mf);

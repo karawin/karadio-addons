@@ -22,17 +22,29 @@ Use Universal 8bit Graphics Library, https://github.com/olikraus/ucglib/
 
   >>> Please uncomment (and update) one of the following constructors. <<<  
 */
+// uncomment only one screen width
+//#define W128
+//#define W132
+#define W160
+//#define W320
+//#define W400
+//#define W480
+
+// uncomment only your screen type
 Ucglib_ST7735_18x128x160_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
 //Ucglib_ILI9163_18x128x128_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
 //Ucglib_ILI9341_18x240x320_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
 //Ucglib_SSD1351_18x128x128_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
 //Ucglib_SSD1351_18x128x128_FT_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
 //Ucglib_PCF8833_16x132x132_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
-//Ucglib_SSD1331_18x96x64_UNIVISION_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
+
 //Ucglib_SEPS225_16x128x128_UNIVISION_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
 //Ucglib_HX8352C_18x240x400_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
 //Ucglib_ILI9486_18x320x480_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
 
+// not supported
+//#define W64
+//Ucglib_SSD1331_18x96x64_UNIVISION_HWSPI ucg(/*cd=*/ PB5 , /*cs=*/ PB6, /*reset=*/ PB4);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 Version 1.0: Initial release 05/2017 jp Cocatrix
