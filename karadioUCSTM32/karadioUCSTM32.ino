@@ -752,12 +752,10 @@ Serial.println(line);
       dvolume = false; // don't show volume on start station
    }else
  //////list station   #CLI.LISTINFO#:
-   if (((ici=strstr(line,"LISTNUM#:")) != NULL)  || ((ici=strstr(line,"LISTINFO#:")) != NULL))
+   if ((ici=strstr(line,"LISTINFO#:")) != NULL)
    {
       char* ptrstrstr;
-      if (*(ici+9) == ':') // LISTINFO
-        strcpy(sline, ici+10);
-      else strcpy(sline, ici+9); //LISTNUM
+      strcpy(sline, ici+10);
       ptrstrstr = strstr(sline,",");
       if (ptrstrstr != NULL)  *ptrstrstr =0;
       Screen(sstation);

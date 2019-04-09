@@ -606,7 +606,7 @@ void parse(char* line)
       dvolume = false; // don't show volume on start station
    }else
  //////list station   #CLI.LISTINFO#:
-   if (((ici=strstr(line,"LISTNUM#:")) != NULL)  || ((ici=strstr(line,"LISTNUM#:")) != NULL))
+   if ((ici=strstr(line,"LISTINFO#:")) != NULL)
    {
       char* ptrstrstr;
       strcpy(sline, ici+10);
