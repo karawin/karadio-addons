@@ -44,6 +44,15 @@ static unsigned char logo_bits[] PROGMEM = {
   }; 
 
 
+#ifdef oled096
+U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE|U8G_I2C_OPT_DEV_0);	// I2C / TWI
+#endif
+#ifdef oled130
+U8GLIB_SH1106_128X64	u8g(U8G_I2C_OPT_NONE|U8G_I2C_OPT_DEV_0);	// I2C / TWI
+#endif
+#ifdef ST7920
+U8GLIB_ST7920_128X64_1X u8g(PA5, PA7, PA4);	// SPI Com: SCK = en = 18, MOSI = rw = 16, CS = di = 17
+#endif
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,6 +173,3 @@ Enjoy.
 
 jpc 05/2017
 */
-
-
-

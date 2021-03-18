@@ -1,8 +1,6 @@
 /*
-
   KaradioU8STM32.pde
   Only for STM32 CPU  
-
 If build complain about HardWire.h missing, replace it with Wire.h
 It is due to the new arduinoSTM32 since july 2017
   
@@ -14,9 +12,11 @@ It is due to the new arduinoSTM32 since july 2017
 #define IR
 // UnComment the following lines if you want the rotary encoder
 #define RENC
+
 // Uncomment your oled type
-//#define oled096  U8GLIB_SSD1306_128X64
-#define oled130 U8GLIB_SH1106_128X64
+#define oled096  U8GLIB_SSD1306_128X64
+//#define oled130 U8GLIB_SH1106_128X64
+//#define ST7920 U8GLIB_ST7920_128X64_1X
 
 // your timezone offset
 #define TZO 1  // comment if the tzo is already given in the esp8266 or change the value
@@ -162,16 +162,13 @@ bool Switch1 = false;
 bool Switch2 = false;
 bool Switch3 = false;
 
-
-//U8GLIB_SSD1306_128X64 u8g;
 #ifdef oled096
 U8GLIB_SSD1306_128X64 u8g;
-#else
+#endif
+
 #ifdef oled130
 U8GLIB_SH1106_128X64 u8g;
 #endif
-#endif
-
 
 
 // init timer 2 for irmp led screen etc
@@ -329,20 +326,34 @@ void setFont(const u8g_fntpgm_uint8_t *font)
 
 void setup(void) {
    portBASE_TYPE s1, s2, s3;
-//uint8_t u8g_com_hw_i2c_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void *arg_ptr);
-//U8GLIB_SSD1306_128X64 u8g((u8g_com_fnptr)u8g_com_hw_i2c_fn);
+
   SERIALX.begin(BAUD);
   Serial.begin(BAUD);
 delay(2000);
 Serial.println("ready");
 
 uint8_t u8g_com_hw_i2c_fn(u8g_t *u8g, uint8_t msg, uint8_t arg_val, void *arg_ptr);
+
 #ifdef oled096
 U8GLIB_SSD1306_128X64 u8g((u8g_com_fnptr)u8g_com_hw_i2c_fn,U8G_I2C_OPT_NONE);
-#else
+#endif
+
 #ifdef oled130
 U8GLIB_SH1106_128X64 u8g((u8g_com_fnptr)u8g_com_hw_i2c_fn,U8G_I2C_OPT_NONE);
 #endif
+
+#ifdef ST7920
+// SPI 1
+/*
+ * Pin connections
+ * stm32          ST7920
+SPI1_SCK PA5    SCLK --> E (Pin 6)
+SPI1_MOSI PA7   MOSI --> RW (Pin 5)
+SPI1_CS PA4     CS --> RS (Pin 4)
+*/
+
+//// SPI Com: SCK = en = 18, MOSI = rw = 16, CS = di = 17
+//U8GLIB_ST7920_128X64_1X u8g(PA5, PA7, PA4) ;
 #endif
 
 #ifdef IR
@@ -1236,4 +1247,3 @@ void drawScreen()
 ////////////////////////////////////////
 void loop(void) { // not used on freertos
 }
-
